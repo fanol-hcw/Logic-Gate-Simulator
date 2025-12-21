@@ -138,6 +138,7 @@ public class SimulatorUI {
     public void removeGate(DraggableGate gate) { workspace.getChildren().remove(gate); }
 
     // --- SETUP CODE ---
+    // ---- The top ribbon where our symbols are
     private void setupRibbon() {
         HBox ribbon = new HBox(20);
         ribbon.setPadding(new Insets(10));
@@ -163,8 +164,7 @@ public class SimulatorUI {
         gatesGroup.getChildren().addAll(
                 createImageButton("AND Gate", "AND", "and.png"),
                 createImageButton("OR Gate", "OR", "or.png"),
-                createImageButton("Yes/Buffer", "BUFFER", "buffer.png"),
-                createImageButton("NOT Gate", "NOT", "not.png")
+                createImageButton("Yes/Buffer", "BUFFER", "buffer.png")
         );
 
         Button clearBtn = new Button("Clear");
