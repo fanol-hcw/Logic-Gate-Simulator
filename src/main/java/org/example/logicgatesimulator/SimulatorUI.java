@@ -29,7 +29,6 @@ public class SimulatorUI {
     }
 
     public BorderPane getRoot() { return root; }
-    public Pane getWorkspace() { return workspace; }
 
     private void setupRibbon() {
         HBox ribbon = new HBox(20);
