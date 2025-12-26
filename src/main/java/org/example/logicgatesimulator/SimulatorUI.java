@@ -17,6 +17,17 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.io.InputStream;
 
+/*
+ * hier ist der Stand für unser Hauptfenster (UI).
+ * Das Menü oben  hat den gewünschten Look mit den Trennlinien.
+ * Das Grid wird gezeichnet.
+ * -Man kann die Gatter bereits aus dem Menü auf das Arbeitsfeld ziehen (Drag & Drop funktioniert).
+ * TODO
+ * die Verkabelung implementieren.
+ * Aktuell gibt es noch gar keine Logik, um Kabel zwischen den Anschlüssen zu ziehen.
+ * Wir müssen uns überlegen, wie wir die Maus-Events (Klicken & Ziehen an den Ports) hier verarbeiten
+ * und die Linien zeichnen.
+ */
 public class SimulatorUI {
     private BorderPane root;
     private Pane workspace;
