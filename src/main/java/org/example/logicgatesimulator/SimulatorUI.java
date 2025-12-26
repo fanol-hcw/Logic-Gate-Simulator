@@ -13,22 +13,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
 import java.io.InputStream;
 
 public class SimulatorUI {
     private BorderPane root;
     private Pane workspace;
     private final int GRID_SIZE = 20;
-
-    // --- WIRING STATE (New Dragging Logic) ---
-    private Line tempLine = null; // The visual line you see while dragging
-    private Circle startPort = null;
-    private DraggableGate startGate = null;
 
     public SimulatorUI() {
         root = new BorderPane();
@@ -39,110 +31,17 @@ public class SimulatorUI {
     public BorderPane getRoot() { return root; }
     public Pane getWorkspace() { return workspace; }
 
-    // --- 1. DRAG WIRING LOGIC (Start, Move, Finish) ---
-
-    // Called when you start dragging a port
-    public void startWireDrag(DraggableGate gate, Circle port) {
-        this.startGate = gate;
-        this.startPort = port;
-
-        // Create a temporary dashed line
-        tempLine = new Line();
-        tempLine.setStrokeWidth(2);
-        tempLine.setStroke(Color.GRAY);
-        tempLine.getStrokeDashArray().addAll(5d, 5d); // Dashed pattern
-
-        // Start point is fixed to the port
-        tempLine.setStartX(gate.getLayoutX() + gate.width/2 + port.getTranslateX());
-        tempLine.setStartY(gate.getLayoutY() + gate.height/2 + port.getTranslateY());
-
-        // End point follows mouse (initially same as start)
-        tempLine.setEndX(tempLine.getStartX());
-        tempLine.setEndY(tempLine.getStartY());
-
-        workspace.getChildren().add(tempLine);
-    }
-
-    // Called while you are moving the mouse
-    public void updateWireDrag(double mouseX, double mouseY) {
-        if (tempLine != null) {
-            // Need to convert local mouse coordinates to workspace coordinates
-            // (Passed from DraggableGate, which does the calculation)
-            tempLine.setEndX(mouseX);
-            tempLine.setEndY(mouseY);
-        }
-    }
-
-    // Called when you release the mouse over a target port
-    public void completeWireDrag(DraggableGate endGate, Circle endPort, boolean isOutput) {
-        if (tempLine == null) return; // Safety check
-
-        // Clean up temp line
-        workspace.getChildren().remove(tempLine);
-        tempLine = null;
-
-        // LOGIC CHECK:
-        // 1. Don't connect to yourself
-        // 2. Don't connect Output to Output (or Input to Input)
-        // 3. One side must be Input, one side Output
-
-        // Assume startPort is Output (Source). If not, we swap logic or block it.
-        // For simplicity: We only allow dragging FROM Output TO Input in this logic
-        // But let's handle both directions:
-
-        boolean startIsOutput = (startPort.getTranslateX() > 0); // Hack: Right side is output
-
-        if (startIsOutput && !isOutput) {
-            // Valid: Output -> Input
-            drawWire(startGate, startPort, endGate, endPort);
-        } else if (!startIsOutput && isOutput) {
-            // Valid: Input -> Output (User dragged backwards)
-            drawWire(endGate, endPort, startGate, startPort);
-        } else {
-            System.out.println("Invalid Connection: Must connect Output to Input.");
-        }
-
-        // Reset
-        startGate = null;
-        startPort = null;
-    }
-
-    // Called if you drop the wire in empty space
-    public void cancelWireDrag() {
-        if (tempLine != null) {
-            workspace.getChildren().remove(tempLine);
-            tempLine = null;
-        }
-        startGate = null;
-        startPort = null;
-    }
-
-    private void drawWire(DraggableGate startGate, Circle startPort, DraggableGate endGate, Circle endPort) {
-        LogicWire wire = new LogicWire(startGate, startPort, endGate, endPort);
-
-        if (workspace.getChildren().size() > 1) workspace.getChildren().add(1, wire);
-        else workspace.getChildren().add(wire);
-
-        startGate.addOutputWire(wire);
-        endGate.addInputWire(wire);
-        startGate.calculateLogic();
-
-        wire.setOnMouseClicked(e -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                removeWire(wire);
-            }
-        });
-    }
-
-    public void removeWire(Line wire) { workspace.getChildren().remove(wire); }
-    public void removeGate(DraggableGate gate) { workspace.getChildren().remove(gate); }
-
-    // --- SETUP CODE ---
-    // ---- The top ribbon where our symbols are
     private void setupRibbon() {
         HBox ribbon = new HBox(20);
         ribbon.setPadding(new Insets(10));
-        ribbon.setStyle("-fx-background-color: white; -fx-border-color: #DDDDDD; -fx-border-width: 0 0 1 0;");
+        ribbon.setStyle(
+                "-fx-background-color: white;" +
+                        "-fx-background-radius: 30;" +
+                        "-fx-border-radius: 30;" +
+                        "-fx-border-color: #D0D0D0;" +
+                        "-fx-border-width: 1;" +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);"
+        );
         ribbon.setPrefHeight(120);
         ribbon.setAlignment(Pos.CENTER_LEFT);
 
@@ -189,7 +88,6 @@ public class SimulatorUI {
         workspace = new Pane();
         workspace.setStyle("-fx-background-color: white;");
         workspace.getChildren().add(drawGrid(2000, 2000));
-
         workspace.setOnDragOver(event -> {
             if (event.getGestureSource() != workspace && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
@@ -211,9 +109,6 @@ public class SimulatorUI {
             event.consume();
         });
 
-        // Cancel wire drag if you release mouse on empty space
-        workspace.setOnMouseReleased(e -> cancelWireDrag());
-
         root.setCenter(workspace);
     }
 
@@ -229,11 +124,13 @@ public class SimulatorUI {
 
     private VBox createRibbonSection(String title, Node content) {
         VBox box = new VBox(5);
-        box.setAlignment(Pos.TOP_CENTER);
+        box.setAlignment(Pos.TOP_LEFT);
         Label lbl = new Label(title);
-        lbl.setFont(Font.font("Segoe UI", FontWeight.BOLD, 11));
+        lbl.setFont(Font.font("Segoe UI", FontWeight.BOLD, 12));
         lbl.setTextFill(Color.web("#666666"));
-        box.getChildren().addAll(lbl, content);
+        Separator line = new Separator();
+        line.setOpacity(0.6);
+        box.getChildren().addAll(lbl, line, content);
         return box;
     }
 
@@ -264,11 +161,5 @@ public class SimulatorUI {
             event.consume();
         });
         return btn;
-    }
-
-    // --- SELECTION HELPER ---
-    public void resetSelection() {
-        // Just cancel any active drag operation
-        cancelWireDrag();
     }
 }
