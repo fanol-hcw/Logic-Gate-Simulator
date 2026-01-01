@@ -15,6 +15,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.example.logicgatesimulator.components.ButtonComponent;
+
 import java.io.InputStream;
 
 /*
@@ -37,6 +39,7 @@ public class SimulatorUI {
         root = new BorderPane();
         setupRibbon();
         setupWorkspace();
+
     }
 
     public BorderPane getRoot() { return root; }
@@ -118,6 +121,8 @@ public class SimulatorUI {
             }
             event.consume();
         });
+
+        workspace.getChildren().add(new ButtonComponent("BTN 1"));
 
         root.setCenter(workspace);
     }
