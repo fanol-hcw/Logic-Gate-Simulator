@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.example.logicgatesimulator.components.AndGateComponent;
 import org.example.logicgatesimulator.components.ButtonComponent;
 
 import java.io.InputStream;
@@ -32,8 +33,8 @@ import java.io.InputStream;
  */
 public class SimulatorUI {
     private BorderPane root;
-    private Pane workspace;
-    private final int GRID_SIZE = 20;
+    private Workspace workspace = new Workspace();
+    public static final int GRID_SIZE = 20;
 
     public SimulatorUI() {
         root = new BorderPane();
@@ -45,7 +46,8 @@ public class SimulatorUI {
     public BorderPane getRoot() { return root; }
 
     private void setupRibbon() {
-        HBox ribbon = new HBox(20);
+        Ribbon ribbon = new Ribbon(root);
+//        HBox ribbon = new HBox(20);
         ribbon.setPadding(new Insets(10));
         ribbon.setStyle(
                 "-fx-background-color: white;" +
@@ -58,71 +60,42 @@ public class SimulatorUI {
         ribbon.setPrefHeight(120);
         ribbon.setAlignment(Pos.CENTER_LEFT);
 
-        HBox inputsGroup = new HBox(5);
-        inputsGroup.getChildren().addAll(
-                createImageButton("Toggle Button", "SWITCH", "switch.png"),
-                createImageButton("Clock", "CLOCK", "clock.png"),
-                createImageButton("Constant 0", "CONST0", "const0.png"),
-                createImageButton("Constant 1", "CONST1", "const1.png")
-        );
+        ribbon.addGroup("Inputs");
+        //ribbon.addGroup("Outputs");
+        ribbon.addGroup("Gates");
+        ribbon.addItem("Inputs", "Button", "Button",  "switch.png", new ButtonComponent("Button", workspace));
 
-        HBox outputsGroup = new HBox(5);
-        outputsGroup.getChildren().addAll(
-                createImageButton("Light", "LIGHT", "light.png"),
-                createImageButton("X-Bit Digit", "DIGIT", "digit.png")
-        );
+        ribbon.addItem("Gates", "And Gate", "And Gate", "and.png", new AndGateComponent("And Gate", workspace));
 
-        HBox gatesGroup = new HBox(5);
-        gatesGroup.getChildren().addAll(
-                createImageButton("AND Gate", "AND", "and.png"),
-                createImageButton("OR Gate", "OR", "or.png"),
-                createImageButton("Yes/Buffer", "BUFFER", "buffer.png")
-        );
-
-        Button clearBtn = new Button("Clear");
-        clearBtn.setOnAction(e -> {
-            workspace.getChildren().clear();
-            workspace.getChildren().add(drawGrid(2000, 2000));
-        });
-
-        ribbon.getChildren().addAll(
-                createRibbonSection("INPUTS", inputsGroup),
-                new Separator(javafx.geometry.Orientation.VERTICAL),
-                createRibbonSection("OUTPUTS", outputsGroup),
-                new Separator(javafx.geometry.Orientation.VERTICAL),
-                createRibbonSection("GATES", gatesGroup),
-                new Separator(javafx.geometry.Orientation.VERTICAL),
-                createRibbonSection("TOOLS", new HBox(clearBtn))
-        );
         root.setTop(ribbon);
     }
 
     private void setupWorkspace() {
-        workspace = new Pane();
-        workspace.setStyle("-fx-background-color: white;");
-        workspace.getChildren().add(drawGrid(2000, 2000));
-        workspace.setOnDragOver(event -> {
-            if (event.getGestureSource() != workspace && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-            }
-            event.consume();
-        });
-
-        workspace.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            if (db.hasString()) {
-                double snapX = Math.round(event.getX() / GRID_SIZE) * GRID_SIZE;
-                double snapY = Math.round(event.getY() / GRID_SIZE) * GRID_SIZE;
-                DraggableGate gate = new DraggableGate(db.getString(), this);
-                gate.setLayoutX(snapX);
-                gate.setLayoutY(snapY);
-                workspace.getChildren().add(gate);
-                event.setDropCompleted(true);
-            }
-            event.consume();
-        });
-
-        workspace.getChildren().add(new ButtonComponent("BTN 1"));
+//        workspace = new Pane();
+//        workspace.setStyle("-fx-background-color: white;");
+//        workspace.getChildren().add(drawGrid(2000, 2000));
+//        workspace.setOnDragOver(event -> {
+//            if (event.getGestureSource() != workspace && event.getDragboard().hasString()) {
+//                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+//            }
+//            event.consume();
+//        });
+//
+//        workspace.setOnDragDropped(event -> {
+//            Dragboard db = event.getDragboard();
+//            if (db.hasString()) {
+//                double snapX = Math.round(event.getX() / GRID_SIZE) * GRID_SIZE;
+//                double snapY = Math.round(event.getY() / GRID_SIZE) * GRID_SIZE;
+//                DraggableGate gate = new DraggableGate(db.getString(), this);
+//                gate.setLayoutX(snapX);
+//                gate.setLayoutY(snapY);
+//                workspace.getChildren().add(gate);
+//                event.setDropCompleted(true);
+//            }
+//            event.consume();
+//        });
+//
+//        workspace.getChildren().add(new ButtonComponent("BTN 1"));
 
         root.setCenter(workspace);
     }

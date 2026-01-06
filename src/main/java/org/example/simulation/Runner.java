@@ -26,6 +26,7 @@ public class Runner extends Thread {
             synchronized(pendingUpdates) {
                 if (!pendingUpdates.isEmpty()) {
                     for (LogicElement element : pendingUpdates) {
+                        //update
                         element.onInputChanged();
                     }
                     pendingUpdates.clear();

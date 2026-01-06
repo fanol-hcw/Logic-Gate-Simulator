@@ -1,7 +1,10 @@
 package org.example.logicgatesimulator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
+import org.example.logicgatesimulator.components.ComponentBase;
+
 import java.io.InputStream;
 
 /*
@@ -14,15 +17,51 @@ import java.io.InputStream;
  * die Logik für das Verkabeln und das Rechnen (AND/OR) einbauen.
  */
 
-public class DraggableGate extends StackPane {
+public class DraggableGate extends ComponentBase {
     private String componentType;
     private ImageView imageView;
     private SimulatorUI uiContext;
 
-    public DraggableGate(String type, SimulatorUI context) {
+
+    private double mouseAnchorX;
+    private double mouseAnchorY;
+
+    boolean wasControlDown = false;
+
+
+
+    public DraggableGate(String type, SimulatorUI context, Workspace workspace) {
+        super(workspace);
         this.componentType = type;
         this.uiContext = context;
+        init();
         updateImage();
+    }
+
+    private void init(){
+
+        addOnMousePressedEvent(event -> {
+            if(event.isControlDown() && event.getButton() == MouseButton.SECONDARY){
+                mouseAnchorX = event.getSceneX() - getLayoutX();
+                mouseAnchorY = event.getSceneY() - getLayoutY();
+            }
+        });
+
+        addOnMouseDraggedEvent(event -> {
+            if(event.isControlDown() && event.getButton() == MouseButton.SECONDARY){
+                wasControlDown = true;
+            }
+            if(wasControlDown && event.getButton() == MouseButton.SECONDARY){
+                setLayoutX(event.getSceneX() - mouseAnchorX);
+                setLayoutY(event.getSceneY() - mouseAnchorY);
+            }
+        });
+
+        addOnMouseReleasedEvent(event -> {
+            if(event.getButton() == MouseButton.SECONDARY){
+                wasControlDown = false;
+            }
+        });
     }
 
     private void updateImage() {
@@ -36,5 +75,9 @@ public class DraggableGate extends StackPane {
             if (this.getChildren().size() > 0) this.getChildren().add(0, imageView);
             else this.getChildren().add(imageView);
         }
+    }
+
+    protected boolean isWasControlDown() {
+        return wasControlDown;
     }
 }

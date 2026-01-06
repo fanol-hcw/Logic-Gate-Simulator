@@ -29,7 +29,7 @@ public class LogicGataSimulatorApplication extends Application {
     public void start(Stage stage) {
         StackPane splashRoot = new StackPane();
         splashRoot.setStyle("-fx-background-color: transparent;");
-        InputStream is = getClass().getResourceAsStream("/images/logo.jpg");
+        InputStream is = null; //getClass().getResourceAsStream("/images/logo.jpg");
         if (is != null) {
             ImageView backgroundLogo = new ImageView(new Image(is));
             backgroundLogo.setFitWidth(600);
@@ -62,7 +62,7 @@ public class LogicGataSimulatorApplication extends Application {
         stage.setScene(splashScene);
         stage.show();
 
-        PauseTransition delay = new PauseTransition(Duration.seconds(3));
+        PauseTransition delay = new PauseTransition(Duration.seconds(0));
         delay.setOnFinished(event -> showMainSimulator(stage));
         delay.play();
     }

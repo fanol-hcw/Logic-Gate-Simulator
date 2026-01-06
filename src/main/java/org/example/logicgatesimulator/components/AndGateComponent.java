@@ -4,14 +4,19 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import org.example.logicgatesimulator.DraggableGate;
+import org.example.logicgatesimulator.SimulatorUI;
+import org.example.logicgatesimulator.Workspace;
 import org.example.simulation.ILogicElement;
+import org.example.simulation.LogicElement;
 import org.example.simulation.gates.AndGate;
 
-public class AndGateComponent extends StackPane {
-    private final AndGate logicGate;
+public class AndGateComponent extends DraggableGate {
+    private final LogicElement logicGate;
     private final Rectangle body;
 
-    public AndGateComponent(String name) {
+    public AndGateComponent(String name, Workspace workspace) {
+        super("and", null, workspace);
         this.logicGate = new AndGate();
         this.logicGate.name = name;
 
@@ -47,7 +52,7 @@ public class AndGateComponent extends StackPane {
         });
     }
 
-    public AndGate getLogic() {
+    public LogicElement getLogic() {
         return logicGate;
     }
 
