@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.example.logicgatesimulator.components.AndGateComponent;
 import org.example.logicgatesimulator.components.ButtonComponent;
+import org.example.logicgatesimulator.components.LedComponent;
 
 import java.io.InputStream;
 
@@ -61,10 +62,10 @@ public class SimulatorUI {
         ribbon.setAlignment(Pos.CENTER_LEFT);
 
         ribbon.addGroup("Inputs");
-        //ribbon.addGroup("Outputs");
+        ribbon.addGroup("Outputs");
         ribbon.addGroup("Gates");
         ribbon.addItem("Inputs", "Button", "Button",  "switch.png", new ButtonComponent("Button", workspace));
-
+        ribbon.addItem("Outputs", "Led", "Led", "light.png", new LedComponent("Led", workspace));
         ribbon.addItem("Gates", "And Gate", "And Gate", "and.png", new AndGateComponent("And Gate", workspace));
 
         root.setTop(ribbon);

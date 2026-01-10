@@ -3,6 +3,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
 import org.example.logicgatesimulator.components.ComponentBase;
 
 import java.io.InputStream;
@@ -54,6 +55,14 @@ public class DraggableGate extends ComponentBase {
             if(wasControlDown && event.getButton() == MouseButton.SECONDARY){
                 setLayoutX(event.getSceneX() - mouseAnchorX);
                 setLayoutY(event.getSceneY() - mouseAnchorY);
+                for (Line line : incomingConnectedLines){
+                    line.setEndX(event.getSceneX() - mouseAnchorX);
+                    line.setEndY(event.getSceneY() - mouseAnchorY);
+                }
+                for (Line line : outcomingConnectedLines){
+                    line.setStartX(event.getSceneX() - mouseAnchorX);
+                    line.setStartY(event.getSceneY() - mouseAnchorY);
+                }
             }
         });
 

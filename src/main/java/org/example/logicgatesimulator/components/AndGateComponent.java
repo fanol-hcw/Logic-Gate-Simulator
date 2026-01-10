@@ -2,6 +2,7 @@ package org.example.logicgatesimulator.components;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import org.example.logicgatesimulator.DraggableGate;
@@ -12,7 +13,6 @@ import org.example.simulation.LogicElement;
 import org.example.simulation.gates.AndGate;
 
 public class AndGateComponent extends DraggableGate {
-    private final LogicElement logicGate;
     private final Rectangle body;
 
     public AndGateComponent(String name, Workspace workspace) {
@@ -26,19 +26,8 @@ public class AndGateComponent extends DraggableGate {
         Text label = new Text("AND");
         this.getChildren().addAll(body, label);
 
-        this.logicGate.addOutputConnection(new ILogicElement() {
-            @Override
-            public void onInputChanged() {
-                updateUI();
-            }
-            @Override
-            public void execute() {}
-            @Override
-            public boolean getOutput() { return false; }
-            @Override
-            public void setInput(int index, ILogicElement element) {}
-            @Override
-            public void addOutputConnection(ILogicElement consumer) {}
+        logicGate.setOnUpdate(event -> {
+            updateUI();
         });
     }
 

@@ -1,42 +1,39 @@
 package org.example.simulation;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
-public class Runner extends Thread {
+public class Runner {
     private static Runner instance;
-    private final Set<LogicElement> pendingUpdates = new HashSet<>();
-    private boolean exit = false;
+    private final Queue<LogicElement> updateQueue = new LinkedList<>();
 
     public static Runner getInstance() {
         if (instance == null) instance = new Runner();
         return instance;
     }
 
+    public void scheduleUpdates(List<LogicElement> elements) {
+        updateQueue.addAll(elements);
+    }
+
     public void scheduleUpdate(LogicElement element) {
-        synchronized(pendingUpdates) {
-            pendingUpdates.add(element);
-        }
+        updateQueue.add(element);
     }
 
-    @Override
-    public void run() {
-        System.out.println("Logic Engine Running...");
-        while(!exit) {
-            synchronized(pendingUpdates) {
-                if (!pendingUpdates.isEmpty()) {
-                    for (LogicElement element : pendingUpdates) {
-                        //update
-                        element.onInputChanged();
-                    }
-                    pendingUpdates.clear();
-                }
-            }
-            try {
-                Thread.sleep(50); // High responsiveness
-            } catch (InterruptedException e) { e.printStackTrace(); }
+    // Process all pending changes until the circuit stabilizes
+    public void step() {
+        int safetyLimit = 1000; // Prevents infinite loops in oscillating circuits
+        int count = 0;
+        System.out.println("Steps are running" );
+        while (!updateQueue.isEmpty() && count < safetyLimit) {
+            LogicElement element = updateQueue.poll();
+            element.onInputChanged();
+            count++;
         }
-    }
 
-    public void stopThread() { exit = true; }
+//        if (count >= safetyLimit) {
+//            System.out.println("Warning: Circuit oscillation detected or complexity limit reached.");
+//        }
+    }
 }
