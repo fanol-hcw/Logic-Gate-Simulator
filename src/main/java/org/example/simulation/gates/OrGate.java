@@ -7,6 +7,6 @@ public class OrGate extends LogicElement {
 
     @Override
     public boolean calculateNewOutput() {
-        return false;
+        return getInputSafe(0) || getInputSafe(1);
     }
 }

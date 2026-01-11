@@ -133,4 +133,13 @@ public class Workspace extends Pane {
     public ArrayList<ComponentBase> getComponents() {
         return components;
     }
+
+    public void clearAll() {
+        getChildren().removeIf(node -> node instanceof ComponentBase || node instanceof Line);
+        components.clear();
+        connections.clear();
+        currentLine = null;
+    }
+
+
 }

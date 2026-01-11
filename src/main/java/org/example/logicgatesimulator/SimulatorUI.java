@@ -15,9 +15,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.example.logicgatesimulator.components.AndGateComponent;
-import org.example.logicgatesimulator.components.ButtonComponent;
-import org.example.logicgatesimulator.components.LedComponent;
+import org.example.logicgatesimulator.components.*;
 
 import java.io.InputStream;
 
@@ -55,7 +53,7 @@ public class SimulatorUI {
                         "-fx-background-radius: 30;" +
                         "-fx-border-radius: 30;" +
                         "-fx-border-color: #D0D0D0;" +
-                        "-fx-border-width: 1;" +
+                        "-fx-border-width: 3;" +
                         "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);"
         );
         ribbon.setPrefHeight(120);
@@ -67,6 +65,19 @@ public class SimulatorUI {
         ribbon.addItem("Inputs", "Button", "Button",  "switch.png", new ButtonComponent("Button", workspace));
         ribbon.addItem("Outputs", "Led", "Led", "light.png", new LedComponent("Led", workspace));
         ribbon.addItem("Gates", "And Gate", "And Gate", "and.png", new AndGateComponent("And Gate", workspace));
+        ribbon.addItem("Gates", "Or Gate", "Or Gate", "or.png", new OrGateComponent("Or Gate", workspace));
+        ribbon.addItem("Gates", "Not Gate", "Not Gate", "not.png", new NotGateComponent("Not Gate", workspace));
+
+        ribbon.addGroup("Tools");
+        Button clearAll = new Button ("Reset");
+        clearAll.setPrefSize(60, 30);
+        clearAll.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
+        clearAll.setAlignment(Pos.CENTER);
+        clearAll.setOnAction(e -> {
+            workspace.clearAll();
+        });
+        ribbon.getGroupIconBox("Tools").getChildren().add(clearAll);
+        ribbon.getGroupIconBox("Tools").setPrefHeight(60);
 
         root.setTop(ribbon);
     }
