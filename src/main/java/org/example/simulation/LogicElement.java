@@ -69,4 +69,15 @@ public abstract class LogicElement {
     public int getInputCount(){
         return inputs.length;
     }
+
+    //Getter für Export
+    public int getInputIndex(LogicElement inputElement) {
+        for (int i = 0; i < inputs.length; i++) {
+            if (inputs[i] == inputElement) {
+                return i;
+            }
+        }
+        return -1; // wenn Element nicht verbunden
+    }
+
 }

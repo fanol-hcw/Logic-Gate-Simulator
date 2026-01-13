@@ -16,7 +16,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.example.logicgatesimulator.components.*;
+import org.example.logicgatesimulator.dto.WorkspaceDTO;
+import org.example.logicgatesimulator.exporter.WorkspaceExporter;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 /*
@@ -73,10 +77,28 @@ public class SimulatorUI {
         clearAll.setPrefSize(60, 30);
         clearAll.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
         clearAll.setAlignment(Pos.CENTER);
-        clearAll.setOnAction(e -> {
+        clearAll.setOnAction(event -> {
             workspace.clearAll();
         });
+
+
+        Button exportToJson = new Button ("Export");
+        exportToJson.setPrefSize(60, 30);
+        exportToJson.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
+        exportToJson.setAlignment(Pos.CENTER);
+        exportToJson.setOnAction(event -> {
+            try {
+                WorkspaceDTO newDTO = workspace.toWorkspaceDTO();
+                WorkspaceExporter exporter = new WorkspaceExporter();
+                exporter.exportToJson(newDTO, new File("myworkspace.json"));
+                System.out.println("Export completed");
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+        });
         ribbon.getGroupIconBox("Tools").getChildren().add(clearAll);
+        ribbon.getGroupIconBox("Tools").getChildren().add(exportToJson);
+
         ribbon.getGroupIconBox("Tools").setPrefHeight(60);
 
         root.setTop(ribbon);

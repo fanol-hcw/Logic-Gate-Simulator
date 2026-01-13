@@ -87,4 +87,20 @@ public class ComponentBase extends ComponentEventHolder {
         outcomingConnectedLines.add(line);
     }
 
+    //Getter Methoden für den JSONExport
+    public String getLogicGateName() {
+        return logicGate.name;
+    }
+
+    public boolean getLogicGateOutput() {
+        return logicGate.getOutput();
+    }
+
+    public int getInputIndexOf(LogicElement inputElement) {
+        return logicGate.getInputIndex(inputElement);
+    }
+
+    public LogicElement getLogicGate() {
+        return logicGate;
+    }
 }
