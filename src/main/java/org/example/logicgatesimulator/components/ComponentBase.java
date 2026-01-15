@@ -58,6 +58,15 @@ public class ComponentBase extends ComponentEventHolder {
 
     }
 
+    public void addLine(ComponentBase from, ComponentBase to, int index){
+        Line line = workspace.addConnection(from, to);
+        if(line != null){
+            to.logicGate.setInput(index, logicGate);
+            addOutcomingConnectedLine(line);
+            to.addIncomingConnectedLine(line);
+        }
+    }
+
     public void addLine(ComponentBase from, ComponentBase to){
         Line line = workspace.addConnection(from, to);
         if(line != null){
