@@ -7,6 +7,7 @@ module org.example.logicgatesimulator {
 
     opens org.example.logicgatesimulator to javafx.fxml;
     opens org.example.logicgatesimulator.dto to com.fasterxml.jackson.databind;
+    opens org.example.logicgatesimulator.controller to javafx.fxml;
 
     exports org.example.logicgatesimulator;
     exports org.example.logicgatesimulator.dto;

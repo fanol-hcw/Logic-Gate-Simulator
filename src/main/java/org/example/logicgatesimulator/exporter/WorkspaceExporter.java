@@ -22,6 +22,8 @@ public class WorkspaceExporter {
     }
 
     public void exportToJson(WorkspaceDTO workspaceDTO, File newfile) throws IOException {
+        RecentsWriter.addToRecent(newfile.getAbsolutePath());
+
         mapper.writeValue(newfile, workspaceDTO);
     }
 

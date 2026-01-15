@@ -19,6 +19,7 @@ public class WorkspaceImporter {
         if(!importFile.exists()){
             return new WorkspaceDTO();
         }
+        RecentsWriter.addToRecent(importFile.getAbsolutePath());
         return mapper.readValue(importFile, WorkspaceDTO.class);
     }
 

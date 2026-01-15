@@ -1,7 +1,10 @@
 package org.example.logicgatesimulator;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -15,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.example.logicgatesimulator.components.*;
 import org.example.logicgatesimulator.dto.WorkspaceDTO;
 import org.example.logicgatesimulator.exporter.WorkspaceExporter;
@@ -43,12 +47,89 @@ public class SimulatorUI {
 
     public SimulatorUI() {
         root = new BorderPane();
+        setupMenu();
         setupRibbon();
         setupWorkspace();
 
     }
 
     public BorderPane getRoot() { return root; }
+
+    public BorderPane getRoot(String pathToProject){
+        File file = new File(pathToProject);
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            System.out.println(path);
+            try {
+                WorkspaceImporter importer = new WorkspaceImporter();
+                WorkspaceDTO workspaceDTO = importer.importFromJson(new File(path));
+                workspace.fromWorkspaceDTO(workspaceDTO);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return root;
+    }
+
+    private void setupMenu(){
+        Menu menu = new Menu("File");
+        //menu.getItems().add(new MenuItem("Save"));
+        MenuItem menuSave = new MenuItem("Export");
+        menuSave.setOnAction(event -> {
+            DirectoryChooser dir_chooser = new DirectoryChooser();
+            File file = dir_chooser.showDialog(this.getRoot().getScene().getWindow());
+            if (file != null) {
+                String path = file.getAbsolutePath() + "/workspace_" + Instant.now().toEpochMilli() + ".json";
+                System.out.println(path);
+                try {
+                    WorkspaceDTO newDTO = workspace.toWorkspaceDTO();
+                    WorkspaceExporter exporter = new WorkspaceExporter();
+                    exporter.exportToJson(newDTO, new File(path));
+                    System.out.println("Export completed");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        menu.getItems().add(menuSave);
+        MenuItem menuLoad = new MenuItem("Import");
+        menuLoad.setOnAction(event -> {
+            FileChooser dir_chooser = new FileChooser();
+            File file = dir_chooser.showOpenDialog(this.getRoot().getScene().getWindow());
+            if (file != null) {
+                String path = file.getAbsolutePath();
+                System.out.println(path);
+                try {
+                    WorkspaceImporter importer = new WorkspaceImporter();
+                    WorkspaceDTO workspaceDTO = importer.importFromJson(new File(path));
+                    workspace.fromWorkspaceDTO(workspaceDTO);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        menu.getItems().add(menuLoad);
+        MenuItem menuCloseProject= new MenuItem("Close Project");
+        menuCloseProject.setOnAction(event -> {
+            // todo: frage benutzer ob er speichern will
+            try {
+                Stage stage = (Stage) this.getRoot().getScene().getWindow();
+                Parent root = FXMLLoader.load(getClass().getResource("start-menu.fxml"));
+                stage.setScene(new Scene(root, 600, 400));
+                stage.setWidth(600);
+                stage.setHeight(400);
+                stage.setResizable(false);
+                stage.show();
+                stage.centerOnScreen();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        menu.getItems().add(menuCloseProject);
+        MenuBar mb = new MenuBar();
+        mb.getMenus().add(menu);
+        root.setTop(mb);
+    }
 
     private void setupRibbon() {
         Ribbon ribbon = new Ribbon(root);
@@ -131,37 +212,11 @@ public class SimulatorUI {
 
         ribbon.getGroupIconBox("Tools").setPrefHeight(60);
 
-        root.setTop(ribbon);
+        root.setCenter(ribbon);
     }
 
     private void setupWorkspace() {
-//        workspace = new Pane();
-//        workspace.setStyle("-fx-background-color: white;");
-//        workspace.getChildren().add(drawGrid(2000, 2000));
-//        workspace.setOnDragOver(event -> {
-//            if (event.getGestureSource() != workspace && event.getDragboard().hasString()) {
-//                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-//            }
-//            event.consume();
-//        });
-//
-//        workspace.setOnDragDropped(event -> {
-//            Dragboard db = event.getDragboard();
-//            if (db.hasString()) {
-//                double snapX = Math.round(event.getX() / GRID_SIZE) * GRID_SIZE;
-//                double snapY = Math.round(event.getY() / GRID_SIZE) * GRID_SIZE;
-//                DraggableGate gate = new DraggableGate(db.getString(), this);
-//                gate.setLayoutX(snapX);
-//                gate.setLayoutY(snapY);
-//                workspace.getChildren().add(gate);
-//                event.setDropCompleted(true);
-//            }
-//            event.consume();
-//        });
-//
-//        workspace.getChildren().add(new ButtonComponent("BTN 1"));
-
-        root.setCenter(workspace);
+        root.setBottom(workspace);
     }
 
     private Canvas drawGrid(double width, double height) {
