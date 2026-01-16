@@ -1,7 +1,10 @@
 package org.example.logicgatesimulator;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -9,16 +12,24 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.example.logicgatesimulator.components.*;
+import org.example.logicgatesimulator.dto.WorkspaceDTO;
+import org.example.logicgatesimulator.exporter.WorkspaceExporter;
+import org.example.logicgatesimulator.exporter.WorkspaceImporter;
 import org.example.logicgatesimulator.Ribbon;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
+import java.time.Instant;
 
 /*
  * hier ist der Stand für unser Hauptfenster (UI).
@@ -44,6 +55,82 @@ public class SimulatorUI {
     }
 
     public BorderPane getRoot() { return root; }
+
+    public BorderPane getRoot(String pathToProject){
+        File file = new File(pathToProject);
+        if (file != null) {
+            String path = file.getAbsolutePath();
+            System.out.println(path);
+            try {
+                WorkspaceImporter importer = new WorkspaceImporter();
+                WorkspaceDTO workspaceDTO = importer.importFromJson(new File(path));
+                workspace.fromWorkspaceDTO(workspaceDTO);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return root;
+    }
+
+    private void setupMenu(){
+        Menu menu = new Menu("File");
+        //menu.getItems().add(new MenuItem("Save"));
+        MenuItem menuSave = new MenuItem("Export");
+        menuSave.setOnAction(event -> {
+            DirectoryChooser dir_chooser = new DirectoryChooser();
+            File file = dir_chooser.showDialog(this.getRoot().getScene().getWindow());
+            if (file != null) {
+                String path = file.getAbsolutePath() + "/workspace_" + Instant.now().toEpochMilli() + ".json";
+                System.out.println(path);
+                try {
+                    WorkspaceDTO newDTO = workspace.toWorkspaceDTO();
+                    WorkspaceExporter exporter = new WorkspaceExporter();
+                    exporter.exportToJson(newDTO, new File(path));
+                    System.out.println("Export completed");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        menu.getItems().add(menuSave);
+        MenuItem menuLoad = new MenuItem("Import");
+        menuLoad.setOnAction(event -> {
+            FileChooser dir_chooser = new FileChooser();
+            File file = dir_chooser.showOpenDialog(this.getRoot().getScene().getWindow());
+            if (file != null) {
+                String path = file.getAbsolutePath();
+                System.out.println(path);
+                try {
+                    WorkspaceImporter importer = new WorkspaceImporter();
+                    WorkspaceDTO workspaceDTO = importer.importFromJson(new File(path));
+                    workspace.fromWorkspaceDTO(workspaceDTO);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        menu.getItems().add(menuLoad);
+        MenuItem menuCloseProject= new MenuItem("Close Project");
+        menuCloseProject.setOnAction(event -> {
+            // todo: frage benutzer ob er speichern will
+            try {
+                Stage stage = (Stage) this.getRoot().getScene().getWindow();
+                Parent root = FXMLLoader.load(getClass().getResource("start-menu.fxml"));
+                stage.setScene(new Scene(root, 600, 400));
+                stage.setWidth(600);
+                stage.setHeight(400);
+                stage.setResizable(false);
+                stage.show();
+                stage.centerOnScreen();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        menu.getItems().add(menuCloseProject);
+        MenuBar mb = new MenuBar();
+        mb.getMenus().add(menu);
+        root.setTop(mb);
+    }
 
     private void setupRibbon() {
         Ribbon ribbon = new Ribbon(root);
@@ -99,7 +186,53 @@ public class SimulatorUI {
         clearAll.setOnAction(event -> {
             workspace.clearAll();
         });
+
+
+        Button exportToJson = new Button ("Export");
+        exportToJson.setPrefSize(60, 30);
+        exportToJson.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
+        exportToJson.setAlignment(Pos.CENTER);
+        exportToJson.setOnAction(event -> {
+            DirectoryChooser dir_chooser = new DirectoryChooser();
+            File file = dir_chooser.showDialog(this.getRoot().getScene().getWindow());
+            if (file != null) {
+                String path = file.getAbsolutePath() + "/workspace_" + Instant.now().toEpochMilli() + ".json";
+                System.out.println(path);
+                try {
+                    WorkspaceDTO newDTO = workspace.toWorkspaceDTO();
+                    WorkspaceExporter exporter = new WorkspaceExporter();
+                    exporter.exportToJson(newDTO, new File(path));
+                    System.out.println("Export completed");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        Button importFromJson = new Button ("Import");
+        importFromJson.setPrefSize(60, 30);
+        importFromJson.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
+        importFromJson.setAlignment(Pos.CENTER);
+        importFromJson.setOnAction(event -> {
+            FileChooser dir_chooser = new FileChooser();
+            File file = dir_chooser.showOpenDialog(this.getRoot().getScene().getWindow());
+            if (file != null) {
+                String path = file.getAbsolutePath();
+                System.out.println(path);
+                try {
+                    WorkspaceImporter importer = new WorkspaceImporter();
+                    WorkspaceDTO workspaceDTO = importer.importFromJson(new File(path));
+                    workspace.fromWorkspaceDTO(workspaceDTO);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
         ribbon.getGroupIconBox("Tools").getChildren().add(clearAll);
+        ribbon.getGroupIconBox("Tools").getChildren().add(exportToJson);
+        ribbon.getGroupIconBox("Tools").getChildren().add(importFromJson);
+
         ribbon.getGroupIconBox("Tools").setPrefHeight(60);
 
         root.setTop(ribbon);

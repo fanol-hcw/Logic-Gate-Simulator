@@ -1,0 +1,56 @@
+{
+  "components" : [ {
+    "id" : "Comp1",
+    "name" : "Button 2",
+    "x" : 140.0,
+    "y" : 80.0,
+    "state" : true,
+    "componentType" : "ButtonComponent"
+  }, {
+    "id" : "Comp2",
+    "name" : "Button 3",
+    "x" : 180.0,
+    "y" : 220.0,
+    "state" : true,
+    "componentType" : "ButtonComponent"
+  }, {
+    "id" : "Comp3",
+    "name" : "Led",
+    "x" : 400.0,
+    "y" : 120.0,
+    "state" : true,
+    "componentType" : "LedComponent"
+  }, {
+    "id" : "Comp4",
+    "name" : "org.example.logicgatesimulator.components.AndGateComponent",
+    "x" : 240.0,
+    "y" : 100.0,
+    "state" : true,
+    "componentType" : "AndGateComponent"
+  } ],
+  "connections" : [ {
+    "fromId" : "Comp1",
+    "toId" : "Comp4",
+    "inputIndex" : 0,
+    "startX" : 140.0,
+    "startY" : 80.0,
+    "endX" : 240.0,
+    "endY" : 100.0
+  }, {
+    "fromId" : "Comp2",
+    "toId" : "Comp4",
+    "inputIndex" : 1,
+    "startX" : 180.0,
+    "startY" : 220.0,
+    "endX" : 240.0,
+    "endY" : 100.0
+  }, {
+    "fromId" : "Comp4",
+    "toId" : "Comp3",
+    "inputIndex" : 0,
+    "startX" : 240.0,
+    "startY" : 100.0,
+    "endX" : 400.0,
+    "endY" : 120.0
+  } ]
+}
