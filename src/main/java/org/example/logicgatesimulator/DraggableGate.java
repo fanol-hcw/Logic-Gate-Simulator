@@ -21,7 +21,7 @@ import java.util.List;
 
 public class DraggableGate extends ComponentBase {
     private String componentType;
-    private ImageView imageView;
+    public ImageView imageView;
     private SimulatorUI uiContext;
 
 
@@ -75,15 +75,36 @@ public class DraggableGate extends ComponentBase {
     }
 
     private void updateImage() {
-        String imageName = componentType.toLowerCase() + ".png";
-        InputStream is = getClass().getResourceAsStream("/images/" + imageName);
-        if (is != null) {
-            if (imageView != null) this.getChildren().remove(imageView);
-            imageView = new ImageView(new Image(is));
-            imageView.setFitWidth(80);
-            imageView.setPreserveRatio(true);
-            if (this.getChildren().size() > 0) this.getChildren().add(0, imageView);
-            else this.getChildren().add(imageView);
+        ComponentRegistry.ComponentMetadata metadata = ComponentRegistry.getMetadata(this.getClass().getSimpleName());
+        String imagePath = metadata != null ? metadata.imagePath : componentType.toLowerCase() + ".png";
+
+        double size = metadata != null ? metadata.iconSize : 40;
+        imageView = ImageLoader.loadImage(imagePath, size);
+        if (imageView.getImage() != null) {
+            if (this.getChildren().size() > 0 && this.getChildren().get(0) instanceof javafx.scene.image.ImageView) {
+                this.getChildren().set(0, imageView);
+            } else {
+                this.getChildren().add(0, imageView);
+            }
+        }
+    }
+
+    // Neue Methode: Bild basierend auf Zustand wechseln
+    protected void updateImageBasedOnState() {
+        ComponentRegistry.ComponentMetadata metadata = ComponentRegistry.getMetadata(this.getClass().getSimpleName());
+
+        if (metadata == null) return;
+
+        String imagePath = logicGate.getOutput() ? metadata.imagePathActive : metadata.imagePath;
+
+        double size = metadata.iconSize;
+        imageView = ImageLoader.loadImage(imagePath, size);
+        if (imageView.getImage() != null) {
+            if (this.getChildren().size() > 0 && this.getChildren().get(0) instanceof javafx.scene.image.ImageView) {
+                this.getChildren().set(0, imageView);
+            } else {
+                this.getChildren().add(0, imageView);
+            }
         }
     }
 

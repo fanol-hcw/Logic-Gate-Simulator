@@ -23,9 +23,11 @@ import org.example.logicgatesimulator.components.*;
 import org.example.logicgatesimulator.dto.WorkspaceDTO;
 import org.example.logicgatesimulator.exporter.WorkspaceExporter;
 import org.example.logicgatesimulator.exporter.WorkspaceImporter;
+import org.example.logicgatesimulator.Ribbon;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.time.Instant;
 
@@ -47,7 +49,6 @@ public class SimulatorUI {
 
     public SimulatorUI() {
         root = new BorderPane();
-        setupMenu();
         setupRibbon();
         setupWorkspace();
 
@@ -149,18 +150,39 @@ public class SimulatorUI {
         ribbon.addGroup("Inputs");
         ribbon.addGroup("Outputs");
         ribbon.addGroup("Gates");
-        ribbon.addItem("Inputs", "Button", "Button",  "switch.png", new ButtonComponent("Button", workspace));
-        ribbon.addItem("Inputs", "Clock", "Clock",  "clock.png", new ClockComponent("Clock", workspace));
-        ribbon.addItem("Outputs", "Led", "Led", "light.png", new LedComponent("Led", workspace));
-        ribbon.addItem("Gates", "And Gate", "And Gate", "and.png", new AndGateComponent("And Gate", workspace));
-        ribbon.addItem("Gates", "Or Gate", "Or Gate", "or.png", new OrGateComponent("Or Gate", workspace));
-        ribbon.addItem("Gates", "Not Gate", "Not Gate", "not.png", new NotGateComponent("Not Gate", workspace));
-
         ribbon.addGroup("Tools");
+
+        // Inputs - 5 Felder
+        for (ComponentConfig.ComponentItem item : ComponentConfig.getInputComponents(workspace)) {
+            ribbon.addItem("Inputs", item.getDisplayName(), item.getTooltip(), item.getImageName(), item.componentInstance);
+        }
+
+        // Outputs - 2 Felder
+        for (ComponentConfig.ComponentItem item : ComponentConfig.getOutputComponents(workspace)) {
+            ribbon.addItem("Outputs", item.getDisplayName(), item.getTooltip(), item.getImageName(), item.componentInstance);
+        }
+
+        // Gates - 3 Felder
+        for (ComponentConfig.ComponentItem item : ComponentConfig.getGateComponents(workspace)) {
+            ribbon.addItem("Gates", item.getDisplayName(), item.getTooltip(), item.getImageName(), item.componentInstance);
+        }
+
         Button clearAll = new Button ("Reset");
         clearAll.setPrefSize(60, 30);
         clearAll.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
         clearAll.setAlignment(Pos.CENTER);
+        try {
+            javafx.scene.image.Image resetIcon = ImageLoader.loadImageAsImage("reset.png");
+            if (resetIcon != null) {
+                ImageView iconView = new ImageView(resetIcon);
+                iconView.setFitWidth(30);
+                iconView.setPreserveRatio(true);
+                clearAll.setGraphic(iconView);
+                clearAll.setContentDisplay(javafx.scene.control.ContentDisplay.TOP);
+            }
+        } catch (Exception e) {
+            System.err.println("Reset icon not found");
+        }
         clearAll.setOnAction(event -> {
             workspace.clearAll();
         });
@@ -213,11 +235,37 @@ public class SimulatorUI {
 
         ribbon.getGroupIconBox("Tools").setPrefHeight(60);
 
-        root.setCenter(ribbon);
+        root.setTop(ribbon);
     }
 
     private void setupWorkspace() {
-        root.setBottom(workspace);
+//        workspace = new Pane();
+//        workspace.setStyle("-fx-background-color: white;");
+//        workspace.getChildren().add(drawGrid(2000, 2000));
+//        workspace.setOnDragOver(event -> {
+//            if (event.getGestureSource() != workspace && event.getDragboard().hasString()) {
+//                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+//            }
+//            event.consume();
+//        });
+//
+//        workspace.setOnDragDropped(event -> {
+//            Dragboard db = event.getDragboard();
+//            if (db.hasString()) {
+//                double snapX = Math.round(event.getX() / GRID_SIZE) * GRID_SIZE;
+//                double snapY = Math.round(event.getY() / GRID_SIZE) * GRID_SIZE;
+//                DraggableGate gate = new DraggableGate(db.getString(), this);
+//                gate.setLayoutX(snapX);
+//                gate.setLayoutY(snapY);
+//                workspace.getChildren().add(gate);
+//                event.setDropCompleted(true);
+//            }
+//            event.consume();
+//        });
+//
+//        workspace.getChildren().add(new ButtonComponent("BTN 1"));
+
+        root.setCenter(workspace);
     }
 
     private Canvas drawGrid(double width, double height) {
@@ -251,15 +299,17 @@ public class SimulatorUI {
         btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: transparent; -fx-padding: 5;"));
 
         try {
-            InputStream is = getClass().getResourceAsStream("/images/" + imageName);
-            if (is != null) {
-                ImageView iv = new ImageView(new Image(is));
-                iv.setFitWidth(50); iv.setPreserveRatio(true);
+            ComponentRegistry.ComponentMetadata metadata = ComponentRegistry.getMetadata(type);
+            if (metadata != null) {
+                ImageView iv = ImageLoader.loadImage(metadata.imagePath, metadata.iconSize * 0.6); // 60% der Komponenten-Größe
                 btn.setGraphic(iv);
             } else {
                 btn.setText(type.substring(0, 2));
             }
-        } catch (Exception e) { btn.setText("?"); }
+        } catch (Exception e) {
+            btn.setText("?");
+        }
+
 
         btn.setOnDragDetected(event -> {
             Dragboard db = btn.startDragAndDrop(TransferMode.ANY);
