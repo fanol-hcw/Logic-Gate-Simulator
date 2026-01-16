@@ -11,7 +11,7 @@ public abstract class LogicElement {
     public String name = "Unnamed";
     protected List<LogicElement> outputConnections = new ArrayList<>();
 
-    private Consumer<Boolean> onUpdate;
+    protected Consumer<Boolean> onUpdate;
 
     public LogicElement(int inputCount) {
         // Default to 1 input if 0 is provided for consistency
@@ -28,7 +28,6 @@ public abstract class LogicElement {
         if (newResult != this.output) {
             this.output = newResult;
             onUpdate.accept(newResult);
-            System.out.println(Arrays.toString(outputConnections.toArray()));
             // Notify the simulation engine that things have changed
             Runner.getInstance().scheduleUpdates(outputConnections);
         }
