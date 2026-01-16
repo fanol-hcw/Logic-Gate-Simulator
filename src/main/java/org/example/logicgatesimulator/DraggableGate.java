@@ -38,8 +38,6 @@ public class DraggableGate extends ComponentBase {
         this.uiContext = context;
         init();
         updateImage();
-        addPorts();
-        enableDrag();
     }
 
     private void init(){
