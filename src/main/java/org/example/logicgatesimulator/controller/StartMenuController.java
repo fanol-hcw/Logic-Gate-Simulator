@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static org.example.logicgatesimulator.SimulatorUI.WINDOW_HEIGHT;
+import static org.example.logicgatesimulator.SimulatorUI.WINDOW_WIDTH;
+
 public class StartMenuController {
 
     public Button btnOpenProject;
@@ -83,8 +86,8 @@ public class StartMenuController {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         SimulatorUI ui = new SimulatorUI();
         stage.getScene().setRoot(ui.getRoot());
-        stage.setWidth(1024);
-        stage.setHeight(800);
+        stage.setWidth(WINDOW_WIDTH);
+        stage.setHeight(WINDOW_HEIGHT);
         stage.setTitle("Logic Gate Simulator");
         stage.setResizable(true);
         stage.centerOnScreen();
@@ -131,8 +134,8 @@ public class StartMenuController {
     private void openProject(String path, Stage stage) {
         SimulatorUI ui = new SimulatorUI();
         stage.getScene().setRoot(ui.getRoot(path));
-        stage.setWidth(1024);
-        stage.setHeight(800);
+        stage.setWidth(WINDOW_WIDTH);
+        stage.setHeight(WINDOW_HEIGHT);
         stage.setTitle("Logic Gate Simulator");
         stage.setResizable(true);
         stage.centerOnScreen();

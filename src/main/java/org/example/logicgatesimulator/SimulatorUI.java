@@ -35,6 +35,8 @@ public class SimulatorUI {
     private BorderPane root;
     private Workspace workspace = new Workspace();
     public static final int GRID_SIZE = 20;
+    public static final int WINDOW_WIDTH = 1300;
+    public static final int WINDOW_HEIGHT = 800;
 
     public SimulatorUI() {
         root = new BorderPane();

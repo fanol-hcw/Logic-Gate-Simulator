@@ -82,6 +82,14 @@ public class ComponentRegistry {
                 80
         ));
 
+        COMPONENTS.put("XorGateComponent", new ComponentMetadata(
+                "Xor Gate",
+                "XOR-Gatter",
+                "xor.png",
+                "xor.png",
+                80
+        ));
+
         COMPONENTS.put("ResetButton", new ComponentMetadata(
                 "Reset",
                 "Alles zurücksetzen",

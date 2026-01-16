@@ -47,7 +47,7 @@ public class Workspace extends Pane {
         connections = new ArrayList<>();
 
         setStyle("-fx-background-color: white;");
-        getChildren().add(drawGrid(2000, 2000));
+        getChildren().add(drawGrid(3000, 2000));
         setOnDragOver(event -> {
             if (event.getGestureSource() != this && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);

@@ -34,7 +34,6 @@ public class ComponentBase extends ComponentEventHolder {
 
     private void init(){
         addOnMousePressedEvent(event -> {
-            System.out.println("Starting movement from " + this);
             if(event.getButton() == MouseButton.SECONDARY && !event.isControlDown()){
                 workspace.setCurrentLine(new Line(event.getSceneX() - workspace.getLayoutX(), event.getSceneY() - workspace.getLayoutY(), event.getSceneX() - workspace.getLayoutX(), event.getSceneY() - workspace.getLayoutY()));
                 workspace.getChildren().add(workspace.getCurrentLine());
@@ -64,11 +63,9 @@ public class ComponentBase extends ComponentEventHolder {
 
         this.setFocusTraversable(true);
         setOnMouseEntered(event -> {
-            System.out.println("Hovering");
             requestFocus();
         });
         setOnMouseExited(event->{
-            System.out.println("Exited hover");
             getParent().requestFocus();
         });
         setOnKeyReleased(event -> {

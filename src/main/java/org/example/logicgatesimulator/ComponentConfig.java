@@ -49,7 +49,8 @@ public class ComponentConfig {
         return Arrays.asList(
                 new ComponentItem("AndGateComponent", new AndGateComponent("And Gate", workspace)),
                 new ComponentItem("OrGateComponent", new OrGateComponent("Or Gate", workspace)),
-                new ComponentItem("NotGateComponent", new NotGateComponent("Not Gate", workspace))
+                new ComponentItem("NotGateComponent", new NotGateComponent("Not Gate", workspace)),
+                new ComponentItem("XorGateComponent", new XorGateComponent("Xor Gate", workspace))
         );
     }
 }
