@@ -4,17 +4,17 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import org.example.logicgatesimulator.components.ComponentBase;
+import org.example.logicgatesimulator.dto.ComponentDTO;
+import org.example.logicgatesimulator.dto.ConnectionDTO;
+import org.example.logicgatesimulator.dto.WorkspaceDTO;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.*;
 
 import static org.example.logicgatesimulator.SimulatorUI.GRID_SIZE;
 
@@ -31,11 +31,11 @@ public class Workspace extends Pane {
     private Line currentLine;
 
 
-    public Workspace(){
+    public Workspace() {
         init();
     }
 
-    private void init(){
+    private void init() {
         components = new ArrayList<>();
         connections = new ArrayList<>();
 
@@ -51,48 +51,51 @@ public class Workspace extends Pane {
 
     }
 
+    private void addComponent(String type, double x, double y){
+        System.out.println(type);
+        Object gate;
+        try {
+            gate = Class.forName(type).getDeclaredConstructor(String.class, Workspace.class).newInstance(type, this);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if(!(gate instanceof DraggableGate)){
+            throw new RuntimeException("Node " + type + " is not of type DragableGate.");
+        }
+        ((DraggableGate)gate).setLayoutX(x);
+        ((DraggableGate)gate).setLayoutY(y);
+        getChildren().add((DraggableGate)gate);
+        components.add((DraggableGate) gate);
+    }
+
     private void addComponent(DragEvent event){
         if (event.getGestureSource() != this && event.getDragboard().hasString()) {
             event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
         }
         Dragboard db = event.getDragboard();
         if (db.hasString()) {
-            double snapX = Math.round(event.getX() / GRID_SIZE) * GRID_SIZE;
-            double snapY = Math.round(event.getY() / GRID_SIZE) * GRID_SIZE;
-            Object gate;
-            try {
-                gate = Class.forName(db.getString()).getDeclaredConstructor(String.class, Workspace.class).newInstance(db.getString(), this);
-            } catch (InstantiationException e) {
-                return;
-            } catch (IllegalAccessException e) {
-                return;
-            } catch (InvocationTargetException e) {
-                return;
-            } catch (NoSuchMethodException e) {
-                return;
-            } catch (ClassNotFoundException e) {
-                return;
-            }
-            if(!(gate instanceof DraggableGate)){
-                throw new RuntimeException("Node " +db.getString()+ " is not of type DragableGate.");
-            }
-            ((DraggableGate)gate).setLayoutX(snapX);
-            ((DraggableGate)gate).setLayoutY(snapY);
-            getChildren().add((DraggableGate)gate);
-            components.add((DraggableGate) gate);
+            addComponent(db.getString(), event.getX(), event.getY());
             event.setDropCompleted(true);
         }
         event.consume();
     }
 
-    public Line addConnection(ComponentBase from, ComponentBase to){
+    public Line addConnection(ComponentBase from, ComponentBase to) {
         // check if exists
-        if(from == to){
+        if (from == to) {
             System.out.println(from + " is equal to " + to);
             return null;
         }
-        for(var connection : connections){
-            if((connection.from == from && connection.to == to ) || ( connection.to == from && connection.from == to)){
+        for (var connection : connections) {
+            if ((connection.from == from && connection.to == to) || (connection.to == from && connection.from == to)) {
                 System.out.println("Returning null because:");
                 System.out.println("Connection.from: " + connection.from);
                 System.out.println("Connection.to: " + connection.to);
@@ -141,5 +144,77 @@ public class Workspace extends Pane {
         currentLine = null;
     }
 
+    public void fromWorkspaceDTO(WorkspaceDTO workspaceDTO) {
+        for(ComponentBase component : components){
+            getChildren().remove(component);
+        }
+        for(Connection connection : connections){
+            getChildren().remove(connection);
+        }
+        components.clear();
+        connections.clear();
+        HashMap<String, ComponentBase> loadedComponents = new HashMap();
 
+        for(ComponentDTO componentDTO : workspaceDTO.getComponents()){
+            addComponent("org.example.logicgatesimulator.components." + componentDTO.getComponentType(), componentDTO.getX(), componentDTO.getY());
+            loadedComponents.put(componentDTO.getId(), components.getLast());
+        }
+        for(ConnectionDTO connectionDTO : workspaceDTO.getConnections()){
+            ComponentBase from = loadedComponents.get(connectionDTO.getFromId());
+            ComponentBase to = loadedComponents.get(connectionDTO.getToId());
+            from.addLine(from, to, connectionDTO.getInputIndex());
+            //components.get(connectionDTO.from).addLine(components.get(connectionDTO.from), components.get(connectionDTO.to), savedConnection.inputIndex);
+        }
+    }
+
+    // JSON Export
+    public WorkspaceDTO toWorkspaceDTO() {
+
+        WorkspaceDTO workspaceDTO = new WorkspaceDTO();
+
+        //Map für die Zuordnung von ComponentBase über eindeutige ID
+
+        Map<ComponentBase, String> componentIdMap = new HashMap<>();
+        List<ComponentDTO> workspaceComponents = new ArrayList<>();
+        int counter = 1;
+
+        for (ComponentBase component : components) {
+            ComponentDTO compDTO = new ComponentDTO();
+
+            String componentId = "Comp" + counter++;
+            componentIdMap.put(component, componentId);
+
+            compDTO.setId(componentId);
+            compDTO.setComponentType(component.getClass().getSimpleName());
+            compDTO.setName(component.getLogicGateName());
+            compDTO.setX(component.getLayoutX());
+            compDTO.setY(component.getLayoutY());
+            compDTO.setState(component.getLogicGateOutput());
+
+            workspaceComponents.add(compDTO);
+        }
+
+        List<ConnectionDTO> workspaceConnections = new ArrayList<>();
+        for (Connection connection : connections) {
+            ConnectionDTO conDTO = new ConnectionDTO();
+
+            conDTO.setFromId(componentIdMap.get(connection.from));
+            conDTO.setToId(componentIdMap.get(connection.to));
+            conDTO.setInputIndex(connection.to.getInputIndexOf(connection.from.getLogicGate()));
+            conDTO.setStartX(connection.line.getStartX());
+            conDTO.setStartY(connection.line.getStartY());
+            conDTO.setEndX(connection.line.getEndX());
+            conDTO.setEndY(connection.line.getEndY());
+
+            workspaceConnections.add(conDTO);
+        }
+
+        workspaceDTO.setComponents(workspaceComponents);
+        workspaceDTO.setConnections(workspaceConnections);
+
+        return workspaceDTO;
+    }
 }
+
+
+

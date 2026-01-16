@@ -58,6 +58,15 @@ public class ComponentBase extends ComponentEventHolder {
 
     }
 
+    public void addLine(ComponentBase from, ComponentBase to, int index){
+        Line line = workspace.addConnection(from, to);
+        if(line != null){
+            to.logicGate.setInput(index, logicGate);
+            addOutcomingConnectedLine(line);
+            to.addIncomingConnectedLine(line);
+        }
+    }
+
     public void addLine(ComponentBase from, ComponentBase to){
         Line line = workspace.addConnection(from, to);
         if(line != null){
@@ -87,4 +96,20 @@ public class ComponentBase extends ComponentEventHolder {
         outcomingConnectedLines.add(line);
     }
 
+    //Getter Methoden für den JSONExport
+    public String getLogicGateName() {
+        return logicGate.name;
+    }
+
+    public boolean getLogicGateOutput() {
+        return logicGate.getOutput();
+    }
+
+    public int getInputIndexOf(LogicElement inputElement) {
+        return logicGate.getInputIndex(inputElement);
+    }
+
+    public LogicElement getLogicGate() {
+        return logicGate;
+    }
 }

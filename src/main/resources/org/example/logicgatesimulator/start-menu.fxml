@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: FFFFFF;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.logicgatesimulator.controller.StartMenuController">
+    <Label text="Welcome to Gate Simulator 3000">
+        <padding>
+            <Insets bottom="40" left="20" right="10" top="20" />
+        </padding>
+        <font>
+            <Font name="Noto Sans Carian Regular" size="24.0" />
+        </font></Label>
+    <HBox prefHeight="100.0" prefWidth="200.0">
+        <children>
+            <VBox alignment="TOP_CENTER" fillWidth="true" spacing="10.0">
+                <padding>
+                    <Insets bottom="20" left="20" right="10" top="20" />
+                </padding>
+                <Button fx:id="btnEmptyScene" mnemonicParsing="false" onAction="#onBtnEmptySceneClicked" prefHeight="26.0" prefWidth="110.0" text=" Empty Scene" VBox.vgrow="ALWAYS" />
+                <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" text="New Project" VBox.vgrow="ALWAYS" />
+                <Button fx:id="btnOpenProject" mnemonicParsing="false" onAction="#onBtnOpenProjectClicked" prefHeight="26.0" prefWidth="110.0" text="Open Project" VBox.vgrow="ALWAYS" />
+            </VBox>
+            <VBox>
+                <children>
+                    <Label text="Rencet Projects" />
+                    <ListView fx:id="recentList" prefHeight="118.0" prefWidth="312.0" />
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</VBox>
