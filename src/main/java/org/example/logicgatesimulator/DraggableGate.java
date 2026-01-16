@@ -57,12 +57,12 @@ public class DraggableGate extends ComponentBase {
                 setLayoutX(event.getSceneX() - mouseAnchorX);
                 setLayoutY(event.getSceneY() - mouseAnchorY);
                 for (Line line : incomingConnectedLines){
-                    line.setEndX(event.getSceneX() - mouseAnchorX);
-                    line.setEndY(event.getSceneY() - mouseAnchorY);
+                    line.setEndX(event.getSceneX() - mouseAnchorX + getWidth()/2);
+                    line.setEndY(event.getSceneY() - mouseAnchorY - 30);
                 }
                 for (Line line : outcomingConnectedLines){
-                    line.setStartX(event.getSceneX() - mouseAnchorX);
-                    line.setStartY(event.getSceneY() - mouseAnchorY);
+                    line.setStartX(event.getSceneX() - mouseAnchorX + getWidth()/2);
+                    line.setStartY(event.getSceneY() - mouseAnchorY - 30);
                 }
             }
         });
