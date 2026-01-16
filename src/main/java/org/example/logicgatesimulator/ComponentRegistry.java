@@ -17,10 +17,10 @@ public class ComponentRegistry {
         ));
 
         COMPONENTS.put("SwitchComponent", new ComponentMetadata(
-                "Switch",
+                "",
                 "Schalter",
                 "SwitchOff.png",
-                "SwitchOn.png",
+                "SwitchOff.png",
                 40
         ));
 
@@ -85,25 +85,8 @@ public class ComponentRegistry {
         COMPONENTS.put("ResetButton", new ComponentMetadata(
                 "Reset",
                 "Alles zurücksetzen",
-                "reset.png",
-                "reset.png",
-                30
-        ));
-
-        COMPONENTS.put("ExportButton", new ComponentMetadata(
-                "Export",
-                "Workspace exportieren",
-                "Export.png",
-                "Export.png",
-                30
-        ));
-
-        COMPONENTS.put("ImportButton", new ComponentMetadata(
-                "Import",
-                "Workspace importieren",
-                "Import.png",
-                "Import.png",
-                30
+                "Reset.png",
+                "Reset.png"
         ));
     }
 

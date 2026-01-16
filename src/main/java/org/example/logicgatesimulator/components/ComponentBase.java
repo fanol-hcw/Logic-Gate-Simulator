@@ -2,6 +2,7 @@ package org.example.logicgatesimulator.components;
 
 import javafx.geometry.Bounds;
 import javafx.scene.control.ChoiceDialog;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -61,6 +62,25 @@ public class ComponentBase extends ComponentEventHolder {
             }
         });
 
+        this.setFocusTraversable(true);
+        setOnMouseEntered(event -> {
+            System.out.println("Hovering");
+            requestFocus();
+        });
+        setOnMouseExited(event->{
+            System.out.println("Exited hover");
+            getParent().requestFocus();
+        });
+        setOnKeyReleased(event -> {
+            if(event.getCode() == KeyCode.DELETE){
+                workspace.deleteComponent(this);
+            }
+        });
+    }
+
+    public void disconnectLine(Line line){
+        incomingConnectedLines.remove(line);
+        outcomingConnectedLines.remove(line);
     }
 
     public void addLine(ComponentBase from, ComponentBase to, int index){
