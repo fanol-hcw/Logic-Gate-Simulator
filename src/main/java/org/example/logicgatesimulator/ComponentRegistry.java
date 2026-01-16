@@ -27,8 +27,8 @@ public class ComponentRegistry {
         COMPONENTS.put("ClockComponent", new ComponentMetadata(
                 "Clock",
                 "Taktsignal",
-                "Clock.png",
-                "Clock.png",
+                "clock.png",
+                "clock.png",
                 30
         ));
 
