@@ -14,7 +14,10 @@ import org.example.logicgatesimulator.components.ComponentBase;
 import org.example.logicgatesimulator.dto.ComponentDTO;
 import org.example.logicgatesimulator.dto.ConnectionDTO;
 import org.example.logicgatesimulator.dto.WorkspaceDTO;
-
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -76,6 +79,17 @@ public class Workspace extends Pane {
         }
         ((DraggableGate)gate).setLayoutX(x);
         ((DraggableGate)gate).setLayoutY(y);
+        /// Löscht die ausgewählte Komponente
+        ((DraggableGate)gate).setOnContextMenuRequested(event -> {
+            ContextMenu contextMenu = new ContextMenu();
+            MenuItem deleteItem = new MenuItem("Lösch die Komponente");
+            deleteItem.setOnAction(e -> {
+                deleteComponent((ComponentBase) gate);
+            });
+            contextMenu.getItems().add(deleteItem);
+            contextMenu.show(((DraggableGate)gate), event.getScreenX(), event.getScreenY());
+            event.consume();;
+        });
         getChildren().add((DraggableGate)gate);
         components.add((DraggableGate) gate);
     }

@@ -31,17 +31,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.time.Instant;
 
-/*
- * hier ist der Stand für unser Hauptfenster (UI).
- * Das Menü oben  hat den gewünschten Look mit den Trennlinien.
- * Das Grid wird gezeichnet.
- * -Man kann die Gatter bereits aus dem Menü auf das Arbeitsfeld ziehen (Drag & Drop funktioniert).
- * TODO
- * die Verkabelung implementieren.
- * Aktuell gibt es noch gar keine Logik, um Kabel zwischen den Anschlüssen zu ziehen.
- * Wir müssen uns überlegen, wie wir die Maus-Events (Klicken & Ziehen an den Ports) hier verarbeiten
- * und die Linien zeichnen.
- */
 public class SimulatorUI {
     private BorderPane root;
     private Workspace workspace = new Workspace();
@@ -287,58 +276,5 @@ public class SimulatorUI {
 //        workspace.getChildren().add(new ButtonComponent("BTN 1"));
 
         root.setCenter(workspace);
-    }
-
-    private Canvas drawGrid(double width, double height) {
-        Canvas canvas = new Canvas(width, height);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setStroke(Color.web("#E0E0E0"));
-        gc.setLineWidth(1);
-        for (double x = 0; x < width; x += GRID_SIZE) gc.strokeLine(x, 0, x, height);
-        for (double y = 0; y < height; y += GRID_SIZE) gc.strokeLine(0, y, width, y);
-        return canvas;
-    }
-
-    private VBox createRibbonSection(String title, Node content) {
-        VBox box = new VBox(5);
-        box.setAlignment(Pos.TOP_LEFT);
-        Label lbl = new Label(title);
-        lbl.setFont(Font.font("Segoe UI", FontWeight.BOLD, 12));
-        lbl.setTextFill(Color.web("#666666"));
-        Separator line = new Separator();
-        line.setOpacity(0.6);
-        box.getChildren().addAll(lbl, line, content);
-        return box;
-    }
-
-    private Button createImageButton(String tooltipText, String type, String imageName) {
-        Button btn = new Button();
-        btn.setTooltip(new Tooltip(tooltipText));
-        btn.setPrefSize(60, 60);
-        btn.setStyle("-fx-background-color: transparent; -fx-padding: 5;");
-        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #F0F0F0; -fx-background-radius: 5; -fx-padding: 5;"));
-        btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: transparent; -fx-padding: 5;"));
-
-        try {
-            ComponentRegistry.ComponentMetadata metadata = ComponentRegistry.getMetadata(type);
-            if (metadata != null) {
-                ImageView iv = ImageLoader.loadImage(metadata.imagePath, metadata.iconSize * 0.6); // 60% der Komponenten-Größe
-                btn.setGraphic(iv);
-            } else {
-                btn.setText(type.substring(0, 2));
-            }
-        } catch (Exception e) {
-            btn.setText("?");
-        }
-
-
-        btn.setOnDragDetected(event -> {
-            Dragboard db = btn.startDragAndDrop(TransferMode.ANY);
-            ClipboardContent content = new ClipboardContent();
-            content.putString(type);
-            db.setContent(content);
-            event.consume();
-        });
-        return btn;
     }
 }
