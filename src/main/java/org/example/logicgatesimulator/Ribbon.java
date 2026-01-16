@@ -104,20 +104,24 @@ public class Ribbon extends HBox {
             throw new RuntimeException("Group " + groupName + " does not exist.");
         }
 
+        ComponentRegistry.ComponentMetadata metadata = ComponentRegistry.getMetadata(referencedComponent.getClass().getSimpleName());
+
         Button btn = new Button();
         btn.setTooltip(new Tooltip(tooltipText));
-        btn.setPrefSize(60, 60);
-        btn.setStyle("-fx-background-color: transparent; -fx-padding: 5;");
-        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #F0F0F0; -fx-background-radius: 5; -fx-padding: 5;"));
-        btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: transparent; -fx-padding: 5;"));
+        btn.setPrefSize(40, 40);
+        btn.setStyle("-fx-background-color: transparent; -fx-padding: 15;");
+        btn.setOnMouseEntered(e -> btn.setStyle("-fx-background-color: #F0F0F0; -fx-background-radius: 5; -fx-padding: 15;"));
+        btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: transparent; -fx-padding: 15;"));
         Image image = null;
         try {
-            InputStream is = getClass().getResourceAsStream("/images/" + imageName);
-            if (is != null) {
-                image = new Image(is);
-                ImageView iv = new ImageView(image);
-                iv.setFitWidth(50); iv.setPreserveRatio(true);
-                btn.setGraphic(iv);
+            if (metadata != null) {
+                image = ImageLoader.loadImageAsImage(metadata.imagePath);
+                if (image != null) {
+                    ImageView iv = new ImageView(image);
+                    iv.setFitWidth(metadata.iconSize); // ← Nutzt die gleiche Größe wie Workspace
+                    iv.setPreserveRatio(true);
+                    btn.setGraphic(iv);
+                }
             } else {
                 btn.setText(name);
             }
@@ -125,9 +129,7 @@ public class Ribbon extends HBox {
 
         Image finalImage = image;
 
-
         btn.setOnDragDetected(event -> {
-
             Dragboard db = btn.startDragAndDrop(TransferMode.ANY);
             ClipboardContent content = new ClipboardContent();
             content.putString(referencedComponent.getClass().getName());
@@ -141,7 +143,6 @@ public class Ribbon extends HBox {
         HBox groupHBox = groupComponents.get(groupName);
         HBox.setHgrow(btn, Priority.ALWAYS);
         groupHBox.getChildren().add(btn);
-        //return btn;
     }
 
     public HBox getGroupIconBox (String groupName) {
@@ -151,6 +152,8 @@ public class Ribbon extends HBox {
         }
         return box;
     }
+
+
 
 
 }

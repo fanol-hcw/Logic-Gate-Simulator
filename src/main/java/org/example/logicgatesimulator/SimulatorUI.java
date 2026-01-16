@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.example.logicgatesimulator.components.*;
+import org.example.logicgatesimulator.Ribbon;
 
 import java.io.InputStream;
 
@@ -62,18 +63,40 @@ public class SimulatorUI {
         ribbon.addGroup("Inputs");
         ribbon.addGroup("Outputs");
         ribbon.addGroup("Gates");
-        ribbon.addItem("Inputs", "Button", "Button",  "switch.png", new ButtonComponent("Button", workspace));
-        ribbon.addItem("Outputs", "Led", "Led", "light.png", new LedComponent("Led", workspace));
-        ribbon.addItem("Gates", "And Gate", "And Gate", "and.png", new AndGateComponent("And Gate", workspace));
-        ribbon.addItem("Gates", "Or Gate", "Or Gate", "or.png", new OrGateComponent("Or Gate", workspace));
-        ribbon.addItem("Gates", "Not Gate", "Not Gate", "not.png", new NotGateComponent("Not Gate", workspace));
-
         ribbon.addGroup("Tools");
+
+        // Inputs - 5 Felder
+        for (ComponentConfig.ComponentItem item : ComponentConfig.getInputComponents(workspace)) {
+            ribbon.addItem("Inputs", item.getDisplayName(), item.getTooltip(), item.getImageName(), item.componentInstance);
+        }
+
+        // Outputs - 2 Felder
+        for (ComponentConfig.ComponentItem item : ComponentConfig.getOutputComponents(workspace)) {
+            ribbon.addItem("Outputs", item.getDisplayName(), item.getTooltip(), item.getImageName(), item.componentInstance);
+        }
+
+        // Gates - 3 Felder
+        for (ComponentConfig.ComponentItem item : ComponentConfig.getGateComponents(workspace)) {
+            ribbon.addItem("Gates", item.getDisplayName(), item.getTooltip(), item.getImageName(), item.componentInstance);
+        }
+
         Button clearAll = new Button ("Reset");
         clearAll.setPrefSize(60, 30);
         clearAll.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
         clearAll.setAlignment(Pos.CENTER);
-        clearAll.setOnAction(e -> {
+        try {
+            javafx.scene.image.Image resetIcon = ImageLoader.loadImageAsImage("reset.png");
+            if (resetIcon != null) {
+                ImageView iconView = new ImageView(resetIcon);
+                iconView.setFitWidth(30);
+                iconView.setPreserveRatio(true);
+                clearAll.setGraphic(iconView);
+                clearAll.setContentDisplay(javafx.scene.control.ContentDisplay.TOP);
+            }
+        } catch (Exception e) {
+            System.err.println("Reset icon not found");
+        }
+        clearAll.setOnAction(event -> {
             workspace.clearAll();
         });
         ribbon.getGroupIconBox("Tools").getChildren().add(clearAll);
@@ -143,15 +166,17 @@ public class SimulatorUI {
         btn.setOnMouseExited(e -> btn.setStyle("-fx-background-color: transparent; -fx-padding: 5;"));
 
         try {
-            InputStream is = getClass().getResourceAsStream("/images/" + imageName);
-            if (is != null) {
-                ImageView iv = new ImageView(new Image(is));
-                iv.setFitWidth(50); iv.setPreserveRatio(true);
+            ComponentRegistry.ComponentMetadata metadata = ComponentRegistry.getMetadata(type);
+            if (metadata != null) {
+                ImageView iv = ImageLoader.loadImage(metadata.imagePath, metadata.iconSize * 0.6); // 60% der Komponenten-Größe
                 btn.setGraphic(iv);
             } else {
                 btn.setText(type.substring(0, 2));
             }
-        } catch (Exception e) { btn.setText("?"); }
+        } catch (Exception e) {
+            btn.setText("?");
+        }
+
 
         btn.setOnDragDetected(event -> {
             Dragboard db = btn.startDragAndDrop(TransferMode.ANY);
