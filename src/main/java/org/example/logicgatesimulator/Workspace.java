@@ -1,5 +1,6 @@
 package org.example.logicgatesimulator;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.DragEvent;
@@ -7,14 +8,17 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import org.example.logicgatesimulator.components.ComponentBase;
 import org.example.logicgatesimulator.dto.ComponentDTO;
 import org.example.logicgatesimulator.dto.ConnectionDTO;
 import org.example.logicgatesimulator.dto.WorkspaceDTO;
 
+import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.List;
 
 import static org.example.logicgatesimulator.SimulatorUI.GRID_SIZE;
 
@@ -105,7 +109,18 @@ public class Workspace extends Pane {
             }
         }
         // add new connection
-        Line line = new Line(from.getLayoutX(), from.getLayoutY(), to.getLayoutX(), to.getLayoutY());
+
+        Circle outPort  = from.getConnectingPort();
+        Circle inPort = to.getConnectingPort();
+
+        Point2D start = outPort.localToScene(0,0 );
+        Point2D end = inPort.localToScene(0,0);
+
+        Line line = new Line(
+                start.getX() - getLayoutX(),
+                start.getY() - getLayoutY(),
+                end.getX() - getLayoutX(),
+                end.getY() - getLayoutY());
         Connection c = new Connection();
         c.from = from;
         c.to = to;

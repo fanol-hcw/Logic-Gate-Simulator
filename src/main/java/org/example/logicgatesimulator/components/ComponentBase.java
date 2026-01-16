@@ -3,6 +3,8 @@ package org.example.logicgatesimulator.components;
 import javafx.geometry.Bounds;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.input.MouseButton;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import org.example.logicgatesimulator.Workspace;
 import org.example.simulation.LogicElement;
@@ -19,11 +21,13 @@ public class ComponentBase extends ComponentEventHolder {
     protected ArrayList<Line> connectedLines = new ArrayList<>();
     protected ArrayList<Line> incomingConnectedLines = new ArrayList<>();
     protected ArrayList<Line> outcomingConnectedLines = new ArrayList<>();
+    private Circle connectingPort;
 
     public ComponentBase(Workspace workspace) {
         super();
         this.workspace = workspace;
         init();
+        addPort();
     }
 
     private void init(){
@@ -112,4 +116,17 @@ public class ComponentBase extends ComponentEventHolder {
     public LogicElement getLogicGate() {
         return logicGate;
     }
+
+    private void addPort() {
+        connectingPort = new Circle(5);
+        connectingPort.setFill(Color.BLUE);
+        connectingPort.setStroke(Color.BLACK);
+        connectingPort.setTranslateX(0);
+        connectingPort.setTranslateY(-40);
+        this.getChildren().add(connectingPort);
+    }
+    public Circle getConnectingPort() {
+        return connectingPort;
+    }
+
 }
