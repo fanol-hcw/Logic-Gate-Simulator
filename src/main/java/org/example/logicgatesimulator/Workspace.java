@@ -92,6 +92,21 @@ public class Workspace extends Pane {
         event.consume();
     }
 
+    public void deleteComponent(ComponentBase componentToDelete){
+        ArrayList<Connection> connectionsToDelete = new ArrayList<>();
+        for(Connection connection : connections){
+            if(connection.to == componentToDelete || connection.from == componentToDelete){
+                connection.to.disconnectLine(connection.line);
+                connection.from.disconnectLine(connection.line);
+                connectionsToDelete.add(connection);
+                getChildren().remove(connection.line);
+            }
+        }
+        connections.removeAll(connectionsToDelete);
+        components.remove(componentToDelete);
+        getChildren().remove(componentToDelete);
+    }
+
     public Line addConnection(ComponentBase from, ComponentBase to) {
         // check if exists
         if (from == to) {
