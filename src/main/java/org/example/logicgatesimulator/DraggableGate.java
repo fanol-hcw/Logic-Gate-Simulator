@@ -7,14 +7,15 @@ import javafx.scene.shape.Line;
 import org.example.logicgatesimulator.components.ComponentBase;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * hier ist die Basis-Klasse für unsere Gatter.
  * Visuell steht das Ding: Das richtige Bild wird geladen
- * ABER: Aktuell sind die Bauteile noch am Boden festgetackert!
- * TODO..
- * die "Drag & Drop" Logik implementieren.
- * Gatter mit der Maus verschieben
+ * die "Drag & Drop" Logik implementieren. - implementiert
+ * Gatter mit der Maus verschieben - implementiert
+ * TODO
  * die Logik für das Verkabeln und das Rechnen (AND/OR) einbauen.
  */
 
@@ -37,6 +38,8 @@ public class DraggableGate extends ComponentBase {
         this.uiContext = context;
         init();
         updateImage();
+        addPorts();
+        enableDrag();
     }
 
     private void init(){
