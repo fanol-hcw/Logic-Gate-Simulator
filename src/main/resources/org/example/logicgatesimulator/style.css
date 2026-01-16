@@ -1,0 +1,54 @@
+/* Main Background */
+.root {
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+/* Title Styling */
+.title-label {
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+}
+
+/* Sidebar/Action Area */
+.action-box {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+/* Button Styling */
+.button {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #2980b9;
+}
+
+/* ListView Styling */
+.list-view {
+    -fx-background-radius: 5;
+    -fx-border-color: #dcdde1;
+    -fx-border-radius: 5;
+}
+
+.button-primary {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white;
+}
+
+.button-secondary {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #7f8c8d;
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 5;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #e74c3c; /* Turns red on hover to signal deletion */
+    -fx-text-fill: white;
+}

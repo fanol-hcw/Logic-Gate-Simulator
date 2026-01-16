@@ -5,30 +5,53 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: FFFFFF;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.logicgatesimulator.controller.StartMenuController">
-    <Label text="Welcome to Gate Simulator 3000">
-        <padding>
-            <Insets bottom="40" left="20" right="10" top="20" />
-        </padding>
+<VBox alignment="TOP_CENTER" prefHeight="450.0" prefWidth="700.0" spacing="20.0"
+      stylesheets="@style.css" xmlns="http://javafx.com/javafx/17.0.12"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="org.example.logicgatesimulator.controller.StartMenuController">
+
+    <padding>
+        <Insets bottom="30" left="30" right="30" top="30" />
+    </padding>
+
+    <Label styleClass="title-label" text="Gate Simulator 3000">
         <font>
-            <Font name="Noto Sans Carian Regular" size="24.0" />
-        </font></Label>
-    <HBox prefHeight="100.0" prefWidth="200.0">
-        <children>
-            <VBox alignment="TOP_CENTER" fillWidth="true" spacing="10.0">
-                <padding>
-                    <Insets bottom="20" left="20" right="10" top="20" />
-                </padding>
-                <Button fx:id="btnEmptyScene" mnemonicParsing="false" onAction="#onBtnEmptySceneClicked" prefHeight="26.0" prefWidth="110.0" text=" Empty Scene" VBox.vgrow="ALWAYS" />
-                <Button mnemonicParsing="false" prefHeight="26.0" prefWidth="110.0" text="New Project" VBox.vgrow="ALWAYS" />
-                <Button fx:id="btnOpenProject" mnemonicParsing="false" onAction="#onBtnOpenProjectClicked" prefHeight="26.0" prefWidth="110.0" text="Open Project" VBox.vgrow="ALWAYS" />
-            </VBox>
-            <VBox>
-                <children>
-                    <Label text="Rencet Projects" />
-                    <ListView fx:id="recentList" prefHeight="118.0" prefWidth="312.0" />
-                </children>
-            </VBox>
-        </children>
+            <Font size="32.0" />
+        </font>
+    </Label>
+
+    <HBox alignment="CENTER" spacing="20.0" VBox.vgrow="ALWAYS">
+        <VBox alignment="CENTER" spacing="15.0" styleClass="action-box" prefWidth="180.0" minWidth="180.0">
+            <padding>
+                <Insets bottom="100" left="15" right="15" top="20" />
+            </padding>
+
+            <Label text="Get Started" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;">
+                <VBox.margin>
+                    <Insets bottom="35" /> </VBox.margin>
+            </Label>
+
+            <Button fx:id="btnEmptyScene" mnemonicParsing="false" onAction="#onBtnEmptySceneClicked"
+                    prefHeight="35.0" prefWidth="140.0" text="Empty Scene" />
+
+<!--            <Button fx:id="btnNewProject" mnemonicParsing="false"-->
+<!--                    prefHeight="35.0" prefWidth="140.0" text="New Project" />-->
+
+            <Button fx:id="btnOpenProject" mnemonicParsing="false" onAction="#onBtnOpenProjectClicked"
+                    prefHeight="35.0" prefWidth="140.0" text="Open Project" />
+        </VBox>
+
+        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+            <Label text="Recent Projects" style="-fx-font-weight: bold; -fx-text-fill: #7f8c8d;" />
+
+            <ListView fx:id="recentList" VBox.vgrow="ALWAYS" />
+
+            <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                <Button fx:id="btnDeleteRecent" onAction="#onBtnDeleteRecentClicked"
+                        text="Delete Selection" styleClass="button-secondary" />
+                <Button fx:id="btnOpenRecent" onAction="#onBtnOpenRecentClicked"
+                        text="Open Selection" styleClass="button-primary" />
+            </HBox>
+        </VBox>
     </HBox>
 </VBox>

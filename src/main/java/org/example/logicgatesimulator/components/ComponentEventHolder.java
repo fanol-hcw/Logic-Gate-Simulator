@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class ComponentEventHolder extends StackPane {
-    private ArrayList<Consumer<MouseEvent>> mousePressedHandlers = new ArrayList<>();
-    private ArrayList<Consumer<MouseEvent>> mouseDraggedHandlers = new ArrayList<>();
-    private ArrayList<Consumer<MouseEvent>> mouseReleasedHandlers = new ArrayList<>();
-    private ArrayList<Consumer<DragEvent>> dragDroppedHandlers = new ArrayList<>();
+    private final ArrayList<Consumer<MouseEvent>> mousePressedHandlers = new ArrayList<>();
+    private final ArrayList<Consumer<MouseEvent>> mouseDraggedHandlers = new ArrayList<>();
+    private final ArrayList<Consumer<MouseEvent>> mouseReleasedHandlers = new ArrayList<>();
+    private final ArrayList<Consumer<DragEvent>> dragDroppedHandlers = new ArrayList<>();
 
     public ComponentEventHolder(){
         super();
