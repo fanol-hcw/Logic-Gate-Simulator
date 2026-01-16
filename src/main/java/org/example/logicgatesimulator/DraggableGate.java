@@ -1,9 +1,11 @@
 package org.example.logicgatesimulator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
+import org.example.logicgatesimulator.components.ComponentBase;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,24 +19,61 @@ import java.util.List;
  * die Logik für das Verkabeln und das Rechnen (AND/OR) einbauen.
  */
 
-public class DraggableGate extends Pane {
+public class DraggableGate extends ComponentBase {
     private String componentType;
     private ImageView imageView;
     private SimulatorUI uiContext;
 
+
     private double mouseAnchorX;
     private double mouseAnchorY;
 
-    private List<Circle> inputPorts = new ArrayList<>();
-    private List<Circle> outputPorts = new ArrayList<>();
+    boolean wasControlDown = false;
 
-    public DraggableGate(String type, SimulatorUI context) {
+
+
+    public DraggableGate(String type, SimulatorUI context, Workspace workspace) {
+        super(workspace);
         this.componentType = type;
         this.uiContext = context;
-        this.setPrefSize(80, 60);
+        init();
         updateImage();
         addPorts();
         enableDrag();
+    }
+
+    private void init(){
+
+        addOnMousePressedEvent(event -> {
+            if(event.isControlDown() && event.getButton() == MouseButton.SECONDARY){
+                mouseAnchorX = event.getSceneX() - getLayoutX();
+                mouseAnchorY = event.getSceneY() - getLayoutY();
+            }
+        });
+
+        addOnMouseDraggedEvent(event -> {
+            if(event.isControlDown() && event.getButton() == MouseButton.SECONDARY){
+                wasControlDown = true;
+            }
+            if(wasControlDown && event.getButton() == MouseButton.SECONDARY){
+                setLayoutX(event.getSceneX() - mouseAnchorX);
+                setLayoutY(event.getSceneY() - mouseAnchorY);
+                for (Line line : incomingConnectedLines){
+                    line.setEndX(event.getSceneX() - mouseAnchorX);
+                    line.setEndY(event.getSceneY() - mouseAnchorY);
+                }
+                for (Line line : outcomingConnectedLines){
+                    line.setStartX(event.getSceneX() - mouseAnchorX);
+                    line.setStartY(event.getSceneY() - mouseAnchorY);
+                }
+            }
+        });
+
+        addOnMouseReleasedEvent(event -> {
+            if(event.getButton() == MouseButton.SECONDARY){
+                wasControlDown = false;
+            }
+        });
     }
 
     private void updateImage() {
@@ -50,51 +89,7 @@ public class DraggableGate extends Pane {
         }
     }
 
-    private void addPorts() {
-        int inputs = 2;
-        if (componentType.equals("Switch") || componentType.equals("CONST0") || componentType.equals("CONST1")) {
-            inputs = 0;
-        } else if (componentType.equals("BUFFER") || componentType.equals("NOT")) {
-            inputs = 1;
-        }
-        int outputs = 1;
-        if (componentType.equals("LIGHT") || componentType.equals("DIGIT")) {
-            outputs = 0;
-        }
-
-        for (int i = 0; i < inputs; i++) {
-            double y = 20 + (i * 20);
-            addPort(80, 30, false);
-        }
-    }
-
-    private void addPort(double x, double y, boolean isIput) {
-        Circle port = new Circle(5);
-        port.setCenterX(x);
-        port.setCenterY(y);
-        port.setFill(Color.BLUE);
-        port.setStroke(Color.BLACK);
-
-        this.getChildren().add(port);
-        if (isIput) inputPorts.add(port);
-        else outputPorts.add(port);
-    }
-
-    private void enableDrag() {
-        this.setOnMousePressed(event -> {
-            mouseAnchorX = event.getX();
-            mouseAnchorY = event.getY();
-            this.toFront();
-            event.consume();
-        });
-
-        this.setOnMouseDragged(event -> {
-            double newX = getLayoutX() + event.getX() - mouseAnchorX;
-            double newY = getLayoutY() + event.getY() - mouseAnchorY;
-            this.setLayoutX(newX);
-            this.setLayoutY(newY);
-
-            event.consume();
-        });
+    protected boolean isWasControlDown() {
+        return wasControlDown;
     }
 }
