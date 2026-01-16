@@ -63,6 +63,7 @@ public class Ribbon extends HBox {
                 CornerRadii.EMPTY,
                 new BorderWidths(2,0, 0,0)
         )));
+        iconBox.setMinHeight(90);
 
 
         //Label
