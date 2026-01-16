@@ -124,21 +124,14 @@ public class Workspace extends Pane {
     public Line addConnection(ComponentBase from, ComponentBase to) {
         // check if exists
         if (from == to) {
-            System.out.println(from + " is equal to " + to);
             return null;
         }
         for (var connection : connections) {
             if ((connection.from == from && connection.to == to) || (connection.to == from && connection.from == to)) {
-                System.out.println("Returning null because:");
-                System.out.println("Connection.from: " + connection.from);
-                System.out.println("Connection.to: " + connection.to);
-                System.out.println("params from: " + from);
-                System.out.println("params to: " + to);
                 return null;
             }
         }
         // add new connection
-
         Circle outPort  = from.getConnectingPort();
         Circle inPort = to.getConnectingPort();
 
