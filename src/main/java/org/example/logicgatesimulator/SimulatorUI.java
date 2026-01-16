@@ -150,6 +150,7 @@ public class SimulatorUI {
         ribbon.addGroup("Outputs");
         ribbon.addGroup("Gates");
         ribbon.addItem("Inputs", "Button", "Button",  "switch.png", new ButtonComponent("Button", workspace));
+        ribbon.addItem("Inputs", "Clock", "Clock",  "clock.png", new ClockComponent("Clock", workspace));
         ribbon.addItem("Outputs", "Led", "Led", "light.png", new LedComponent("Led", workspace));
         ribbon.addItem("Gates", "And Gate", "And Gate", "and.png", new AndGateComponent("And Gate", workspace));
         ribbon.addItem("Gates", "Or Gate", "Or Gate", "or.png", new OrGateComponent("Or Gate", workspace));
