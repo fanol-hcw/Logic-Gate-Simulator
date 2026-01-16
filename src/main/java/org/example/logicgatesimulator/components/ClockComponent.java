@@ -5,11 +5,9 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import org.example.logicgatesimulator.ComponentRegistry;
 import org.example.logicgatesimulator.DraggableGate;
+import org.example.logicgatesimulator.ImageLoader;
 import org.example.logicgatesimulator.Workspace;
 import org.example.simulation.inputs.Clock;
 
@@ -17,63 +15,79 @@ import java.util.Optional;
 
 public class ClockComponent extends DraggableGate {
 
-    private final Circle toggleSwitch;
     static int clockCount = 0;
     private boolean isEnabled = false;
 
     public ClockComponent(String type, Workspace workspace) {
-        super(type, null, workspace);
+        super("ClockComponent", null, workspace);
         clockCount++;
         this.logicGate = new Clock();
         this.logicGate.name = "Clock " + clockCount;
-        Text label = new Text(this.logicGate.name);
-        label.setTranslateY(60);
-        label.setWrappingWidth(100);
-        label.setTextAlignment(TextAlignment.CENTER);
-        this.toggleSwitch = new Circle(20, Color.GRAY);
-        this.toggleSwitch.setStroke(Color.BLACK);
-        this.toggleSwitch.setCursor(Cursor.HAND);
-        this.toggleSwitch.setOnMouseClicked(e -> {
-            if(e.getButton() == MouseButton.MIDDLE){
+
+        updateImageByState();
+
+        logicGate.setOnUpdate(isOn -> {
+            updateImageByState();
+        });
+
+        addOnMousePressedEvent(e -> {
+            if (e.getButton() == MouseButton.MIDDLE) {
                 Optional<Integer> result = showSliderDialog(((Clock) logicGate).getSleepTime());
                 result.ifPresent(value -> ((Clock) logicGate).setSleepTime(value));
-            }else if(e.getButton() == MouseButton.PRIMARY){
-                if(isEnabled){
+            } else if (e.getButton() == MouseButton.PRIMARY) {
+                if (isEnabled) {
                     isEnabled = false;
-                    ((Clock)logicGate).stop();
-                    toggleSwitch.setFill(Color.GRAY);
-                }else {
+                    ((Clock) logicGate).stop();
+                } else {
                     isEnabled = true;
-                    ((Clock)logicGate).start(this);
+                    ((Clock) logicGate).start(this);
                 }
             }
         });
-        logicGate.setOnUpdate(event -> {
-            toggleSwitch.setFill(event ? Color.LIME : Color.DARKRED);
-        });
+    }
 
-        this.getChildren().addAll(toggleSwitch, label);
+    private void updateImageByState() {
+        javafx.application.Platform.runLater(() -> {
+            ComponentRegistry.ComponentMetadata metadata =
+                    ComponentRegistry.getMetadata("ClockComponent");
+            if (metadata == null) return;
+
+            // Nur beim ersten Mal das Bild laden
+            if (imageView == null || imageView.getImage() == null) {
+                imageView = ImageLoader.loadImage(metadata.imagePath, 40);
+                if (imageView.getImage() != null) {
+                    if (this.getChildren().size() > 0 && this.getChildren().get(0) instanceof javafx.scene.image.ImageView) {
+                        this.getChildren().set(0, imageView);
+                    } else if (this.getChildren().isEmpty()) {
+                        this.getChildren().add(0, imageView);
+                    }
+                }
+            }
+
+            // Spiegelung per ScaleX + Verschiebung nach links/rechts
+            if (imageView != null) {
+                boolean isOn = logicGate.getOutput();
+                imageView.setScaleX(isOn ? -1 : 1);
+                imageView.setTranslateX(isOn ? 3.5 : -3.5); // 5 Pixel Verschiebung
+            }
+        });
     }
 
     private Optional<Integer> showSliderDialog(int startingPosition) {
-        // 1. Create the dialog instance
         Dialog<Integer> dialog = new Dialog<>();
         dialog.setTitle("Select a Value");
         dialog.setHeaderText("Please move the slider to choose a number.");
 
-        // 2. Set the button types (OK and Cancel)
         ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(okButtonType, ButtonType.CANCEL);
 
-        // 3. Create the UI components
-        Slider slider = new Slider(100, 5000, startingPosition); // Min, Max, Initial value
+        Slider slider = new Slider(100, 5000, startingPosition);
         slider.setShowTickLabels(true);
         slider.setShowTickMarks(true);
         slider.setMajorTickUnit(250);
 
         Label valueLabel = new Label("Value: " + (int) slider.getValue());
 
-        // Update label dynamically as slider moves
         slider.valueProperty().addListener((obs, oldVal, newVal) ->
                 valueLabel.setText("Value: " + newVal.intValue()));
 
@@ -81,7 +95,6 @@ public class ClockComponent extends DraggableGate {
         content.setPadding(new Insets(20));
         dialog.getDialogPane().setContent(content);
 
-        // 4. Convert the result to the slider value when OK is clicked
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == okButtonType) {
                 return (int) slider.getValue();
@@ -91,5 +104,4 @@ public class ClockComponent extends DraggableGate {
 
         return dialog.showAndWait();
     }
-
 }

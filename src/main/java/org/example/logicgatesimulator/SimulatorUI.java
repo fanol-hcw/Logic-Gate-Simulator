@@ -49,9 +49,9 @@ public class SimulatorUI {
 
     public SimulatorUI() {
         root = new BorderPane();
+        setupMenu();
         setupRibbon();
         setupWorkspace();
-
     }
 
     public BorderPane getRoot() { return root; }
@@ -171,17 +171,16 @@ public class SimulatorUI {
         clearAll.setPrefSize(60, 30);
         clearAll.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
         clearAll.setAlignment(Pos.CENTER);
-        try {
-            javafx.scene.image.Image resetIcon = ImageLoader.loadImageAsImage("reset.png");
+        ComponentRegistry.ComponentMetadata resetMeta = ComponentRegistry.getMetadata("ResetButton");
+        if (resetMeta != null) {
+            javafx.scene.image.Image resetIcon = ImageLoader.loadImageAsImage(resetMeta.imagePath);
             if (resetIcon != null) {
                 ImageView iconView = new ImageView(resetIcon);
-                iconView.setFitWidth(30);
+                iconView.setFitWidth(resetMeta.iconSize);
                 iconView.setPreserveRatio(true);
                 clearAll.setGraphic(iconView);
                 clearAll.setContentDisplay(javafx.scene.control.ContentDisplay.TOP);
             }
-        } catch (Exception e) {
-            System.err.println("Reset icon not found");
         }
         clearAll.setOnAction(event -> {
             workspace.clearAll();
@@ -192,6 +191,17 @@ public class SimulatorUI {
         exportToJson.setPrefSize(60, 30);
         exportToJson.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
         exportToJson.setAlignment(Pos.CENTER);
+        ComponentRegistry.ComponentMetadata exportMeta = ComponentRegistry.getMetadata("ExportButton");
+        if (exportMeta != null) {
+            javafx.scene.image.Image exportIcon = ImageLoader.loadImageAsImage(exportMeta.imagePath);
+            if (exportIcon != null) {
+                ImageView iconView = new ImageView(exportIcon);
+                iconView.setFitWidth(exportMeta.iconSize);
+                iconView.setPreserveRatio(true);
+                exportToJson.setGraphic(iconView);
+                exportToJson.setContentDisplay(javafx.scene.control.ContentDisplay.TOP);
+            }
+        }
         exportToJson.setOnAction(event -> {
             DirectoryChooser dir_chooser = new DirectoryChooser();
             File file = dir_chooser.showDialog(this.getRoot().getScene().getWindow());
@@ -213,6 +223,17 @@ public class SimulatorUI {
         importFromJson.setPrefSize(60, 30);
         importFromJson.setFont((Font.font("Aptos", FontWeight.NORMAL, 10)));
         importFromJson.setAlignment(Pos.CENTER);
+        ComponentRegistry.ComponentMetadata importMeta = ComponentRegistry.getMetadata("ImportButton");
+        if (importMeta != null) {
+            javafx.scene.image.Image importIcon = ImageLoader.loadImageAsImage(importMeta.imagePath);
+            if (importIcon != null) {
+                ImageView iconView = new ImageView(importIcon);
+                iconView.setFitWidth(importMeta.iconSize);
+                iconView.setPreserveRatio(true);
+                importFromJson.setGraphic(iconView);
+                importFromJson.setContentDisplay(javafx.scene.control.ContentDisplay.TOP);
+            }
+        }
         importFromJson.setOnAction(event -> {
             FileChooser dir_chooser = new FileChooser();
             File file = dir_chooser.showOpenDialog(this.getRoot().getScene().getWindow());

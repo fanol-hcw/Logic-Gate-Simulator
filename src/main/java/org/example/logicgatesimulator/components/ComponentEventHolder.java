@@ -11,6 +11,7 @@ public class ComponentEventHolder extends StackPane {
     private final ArrayList<Consumer<MouseEvent>> mousePressedHandlers = new ArrayList<>();
     private final ArrayList<Consumer<MouseEvent>> mouseDraggedHandlers = new ArrayList<>();
     private final ArrayList<Consumer<MouseEvent>> mouseReleasedHandlers = new ArrayList<>();
+    private final ArrayList<Consumer<MouseEvent>> mouseClickedHandlers = new ArrayList<>();
     private final ArrayList<Consumer<DragEvent>> dragDroppedHandlers = new ArrayList<>();
 
     public ComponentEventHolder(){
@@ -37,6 +38,11 @@ public class ComponentEventHolder extends StackPane {
             }
             event.consume();
         });
+        setOnMouseClicked(event -> {
+            for (Consumer<MouseEvent> eventHandler : mouseClickedHandlers){
+                eventHandler.accept(event);
+            }
+        });
     }
 
     public void addOnMousePressedEvent(Consumer<MouseEvent> event){
@@ -49,6 +55,10 @@ public class ComponentEventHolder extends StackPane {
 
     public void addOnMouseReleasedEvent(Consumer<MouseEvent> event){
         mouseReleasedHandlers.add(event);
+    }
+
+    public void addOnMouseClickedEvent(Consumer<MouseEvent> event){
+        mouseClickedHandlers.add(event);
     }
 
     public void addOnDragDroppedEvent(Consumer<DragEvent> event){

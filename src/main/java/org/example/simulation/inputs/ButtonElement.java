@@ -17,6 +17,11 @@ public class ButtonElement extends LogicElement {
             this.output = value;
             System.out.println("Button [" + name + "] set to: " + value);
 
+            // Trigger the onUpdate callback for visual feedback
+            if (onUpdate != null) {
+                onUpdate.accept(value);
+            }
+
             // Instead of calling onInputChanged directly, we tell the engine
             // to update everything connected to this button
             System.out.println(Arrays.toString(outputConnections.toArray()));

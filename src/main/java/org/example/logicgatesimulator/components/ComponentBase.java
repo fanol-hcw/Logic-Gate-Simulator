@@ -8,6 +8,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import org.example.logicgatesimulator.Workspace;
 import org.example.simulation.LogicElement;
+import org.example.simulation.Runner;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -68,6 +69,9 @@ public class ComponentBase extends ComponentEventHolder {
             to.logicGate.setInput(index, logicGate);
             addOutcomingConnectedLine(line);
             to.addIncomingConnectedLine(line);
+            // Signal nach dem Verbinden propagieren
+            Runner.getInstance().scheduleUpdate(to.logicGate);
+            Runner.getInstance().step();
         }
     }
 
@@ -84,11 +88,17 @@ public class ComponentBase extends ComponentEventHolder {
                     to.logicGate.setInput(index, logicGate);
                     addOutcomingConnectedLine(line);
                     to.addIncomingConnectedLine(line);
+                    // Signal nach dem Verbinden propagieren
+                    Runner.getInstance().scheduleUpdate(to.logicGate);
+                    Runner.getInstance().step();
                 });
             }else{
                 to.logicGate.setInput(0, logicGate);
                 addOutcomingConnectedLine(line);
                 to.addIncomingConnectedLine(line);
+                // Signal nach dem Verbinden propagieren
+                Runner.getInstance().scheduleUpdate(to.logicGate);
+                Runner.getInstance().step();
             }
         }
     }
