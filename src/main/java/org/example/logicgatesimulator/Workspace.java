@@ -58,6 +58,12 @@ public class Workspace extends Pane {
 
     }
 
+    /**
+     * @throws RuntimeException If any problems occur with creation of a component
+     * @param type
+     * @param x
+     * @param y
+     */
     private void addComponent(String type, double x, double y){
         System.out.println(type);
         Object gate;

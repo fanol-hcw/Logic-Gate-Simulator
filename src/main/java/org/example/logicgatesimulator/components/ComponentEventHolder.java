@@ -7,6 +7,9 @@ import javafx.scene.layout.StackPane;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+/**
+ * Holds all events in a list to allow all extending objects execute its logic independently and to prevent overrides.
+ */
 public class ComponentEventHolder extends StackPane {
     private final ArrayList<Consumer<MouseEvent>> mousePressedHandlers = new ArrayList<>();
     private final ArrayList<Consumer<MouseEvent>> mouseDraggedHandlers = new ArrayList<>();

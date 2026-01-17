@@ -18,10 +18,12 @@ public abstract class LogicElement {
         inputs = new LogicElement[inputCount > 0 ? inputCount : 1];
     }
 
-    // This is the core logic of the gate (AND, OR, NOT)
     public abstract boolean calculateNewOutput();
 
-    // Triggered when an input changes
+
+    /**
+     * Should be triggered when an input changes
+     */
     public void onInputChanged() {
         boolean newResult = calculateNewOutput();
 
@@ -33,6 +35,11 @@ public abstract class LogicElement {
         }
     }
 
+    /**
+     * Defines, to which input index a new element should connect
+     * @param index
+     * @param element
+     */
     public void setInput(int index, LogicElement element) {
         System.out.println("Adding " + element + "to index " + index + "to " + this);
         if (index >= 0 && index < inputs.length) {
@@ -58,7 +65,7 @@ public abstract class LogicElement {
         if (index < inputs.length && inputs[index] != null) {
             return inputs[index].getOutput();
         }
-        return false; // Default value for unconnected pins
+        return false;
     }
 
     public void setOnUpdate(Consumer<Boolean> onUpdate) {
