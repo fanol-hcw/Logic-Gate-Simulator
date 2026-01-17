@@ -21,7 +21,12 @@ public class Runner {
         updateQueue.add(element);
     }
 
-    // Process all pending changes until the circuit stabilizes
+    //
+
+    /**
+     * Process all pending changes until the circuit stabilizes.
+     * Ends when all inputs are processed or when it has run 1000 times (to prevent infinite loops).
+     */
     public void step() {
         int safetyLimit = 1000; // Prevents infinite loops in oscillating circuits
         int count = 0;
@@ -31,9 +36,5 @@ public class Runner {
             element.onInputChanged();
             count++;
         }
-
-//        if (count >= safetyLimit) {
-//            System.out.println("Warning: Circuit oscillation detected or complexity limit reached.");
-//        }
     }
 }
