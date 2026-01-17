@@ -20,3 +20,6 @@ The `simulation` package contains the actual logic behind the simulator. This is
 ## Notes
 
 This project was created as part of a school assignment and focuses on learning Java, JavaFX, and basic digital logic concepts and is intended for educational use only. The code can be extended with more gates or features if needed.
+## Documentation
+You can find detailed technical documentation regarding the project, architecture, and components here:
+[📄 Open Project Documentation](docs/Documentation.md)
