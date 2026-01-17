@@ -1,17 +1,23 @@
 package org.example.logicgatesimulator.components;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.geometry.Pos;
 import org.example.logicgatesimulator.Workspace;
 import org.example.simulation.LogicElement;
 import org.example.simulation.Runner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ComponentBase extends ComponentEventHolder {
@@ -23,13 +29,15 @@ public class ComponentBase extends ComponentEventHolder {
     protected ArrayList<Line> connectedLines = new ArrayList<>();
     protected ArrayList<Line> incomingConnectedLines = new ArrayList<>();
     protected ArrayList<Line> outcomingConnectedLines = new ArrayList<>();
-    private Circle connectingPort;
+    private List<Circle> inputPorts = new ArrayList<>();
+    private Circle outputPort;
+    private final Map<Line, Integer> incomingLineInputIndex = new HashMap<>();
 
     public ComponentBase(Workspace workspace) {
         super();
         this.workspace = workspace;
         init();
-        addPort();
+        addPorts();
     }
 
     private void init(){
@@ -78,14 +86,15 @@ public class ComponentBase extends ComponentEventHolder {
     public void disconnectLine(Line line){
         incomingConnectedLines.remove(line);
         outcomingConnectedLines.remove(line);
+        incomingLineInputIndex.remove(line);
     }
 
     public void addLine(ComponentBase from, ComponentBase to, int index){
-        Line line = workspace.addConnection(from, to);
+        Line line = workspace.addConnection(from, to, index);
         if(line != null){
             to.logicGate.setInput(index, logicGate);
             addOutcomingConnectedLine(line);
-            to.addIncomingConnectedLine(line);
+            to.addIncomingConnectedLine(line, index);
             // Signal nach dem Verbinden propagieren
             Runner.getInstance().scheduleUpdate(to.logicGate);
             Runner.getInstance().step();
@@ -93,35 +102,23 @@ public class ComponentBase extends ComponentEventHolder {
     }
 
     public void addLine(ComponentBase from, ComponentBase to){
-        Line line = workspace.addConnection(from, to);
-        if(line != null){
-            if(to.logicGate.getInputCount() > 1){
-                ChoiceDialog<String> dialog = new ChoiceDialog<>("1", Integer.toString(to.logicGate.getInputCount()));
-                dialog.setTitle("Connect Gates");
-                dialog.setContentText("Choose the input index:");
-                Optional<String> result = dialog.showAndWait();
-                result.ifPresent(choice -> {
-                    int index = Integer.parseInt(choice.split(" ")[0]) - 1;
-                    to.logicGate.setInput(index, logicGate);
-                    addOutcomingConnectedLine(line);
-                    to.addIncomingConnectedLine(line);
-                    // Signal nach dem Verbinden propagieren
-                    Runner.getInstance().scheduleUpdate(to.logicGate);
-                    Runner.getInstance().step();
-                });
-            }else{
-                to.logicGate.setInput(0, logicGate);
-                addOutcomingConnectedLine(line);
-                to.addIncomingConnectedLine(line);
-                // Signal nach dem Verbinden propagieren
-                Runner.getInstance().scheduleUpdate(to.logicGate);
-                Runner.getInstance().step();
-            }
+        if(to.logicGate.getInputCount() > 1){
+            ChoiceDialog<String> dialog = new ChoiceDialog<>("1", Integer.toString(to.logicGate.getInputCount()));
+            dialog.setTitle("Connect Gates");
+            dialog.setContentText("Choose the input index:");
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(choice -> {
+                int index = Integer.parseInt(choice.split(" ")[0]) - 1;
+                addLine(from, to, index);
+            });
+        }else{
+            addLine(from, to, 0);
         }
     }
 
-    public void addIncomingConnectedLine(Line line){
+    public void addIncomingConnectedLine(Line line, int inputIndex){
         incomingConnectedLines.add(line);
+        incomingLineInputIndex.put(line, inputIndex);
     }
     public void addOutcomingConnectedLine(Line line){
         outcomingConnectedLines.add(line);
@@ -144,16 +141,78 @@ public class ComponentBase extends ComponentEventHolder {
         return logicGate;
     }
 
-    private void addPort() {
-        connectingPort = new Circle(5);
-        connectingPort.setFill(Color.BLUE);
-        connectingPort.setStroke(Color.BLACK);
-        connectingPort.setTranslateX(0);
-        connectingPort.setTranslateY(-40);
-        this.getChildren().add(connectingPort);
+    protected int getInputPortCount() {
+        return 1;
     }
-    public Circle getConnectingPort() {
-        return connectingPort;
+
+    protected int getOutputPortCount() {
+        return 1;
+    }
+
+    protected double getInputPortXOffset() {
+        return 0;
+    }
+
+    protected double getInputPortSpacing() {
+        return 14;
+    }
+
+    protected double getOutputPortXOffset() {
+        return 0;
+    }
+
+    private Circle createPort() {
+        Circle port = new Circle(5);
+        port.setFill(Color.BLACK);
+        port.setStroke(Color.BLACK);
+        return port;
+    }
+
+    private void addPorts() {
+        int inputCount = getInputPortCount();
+        if (inputCount > 0) {
+            double spacing = getInputPortSpacing();
+            double startOffset = inputCount == 1 ? 0 : -((inputCount - 1) / 2.0) * spacing;
+            for (int i = 0; i < inputCount; i++) {
+                Circle port = createPort();
+                StackPane.setAlignment(port, Pos.CENTER_LEFT);
+                port.setTranslateX(getInputPortXOffset());
+                port.setTranslateY(startOffset + i * spacing);
+                inputPorts.add(port);
+                this.getChildren().add(port);
+            }
+        }
+
+        if (getOutputPortCount() > 0) {
+            outputPort = createPort();
+            StackPane.setAlignment(outputPort, Pos.CENTER_RIGHT);
+            outputPort.setTranslateX(getOutputPortXOffset());
+            this.getChildren().add(outputPort);
+        }
+    }
+
+    public Circle getInputPort(int index) {
+        if (index < 0 || index >= inputPorts.size()) {
+            return null;
+        }
+        return inputPorts.get(index);
+    }
+
+    public Circle getOutputPort() {
+        return outputPort;
+    }
+
+    public Point2D getInputPortScenePosition(int index) {
+        Circle port = getInputPort(index);
+        return port != null ? port.localToScene(0, 0) : null;
+    }
+
+    public Point2D getOutputPortScenePosition() {
+        return outputPort != null ? outputPort.localToScene(0, 0) : null;
+    }
+
+    public int getIncomingLineInputIndex(Line line) {
+        return incomingLineInputIndex.getOrDefault(line, 0);
     }
 
 }

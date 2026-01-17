@@ -47,6 +47,21 @@ public class ButtonComponent extends DraggableGate {
         });
     }
 
+    @Override
+    protected int getInputPortCount() {
+        return 0;
+    }
+
+    @Override
+    protected int getOutputPortCount() {
+        return 1;
+    }
+
+    @Override
+    protected double getOutputPortXOffset() {
+        return 6;
+    }
+
     private void updateImageByState() {
         javafx.application.Platform.runLater(() -> {
             ComponentRegistry.ComponentMetadata metadata =

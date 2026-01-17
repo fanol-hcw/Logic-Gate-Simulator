@@ -21,4 +21,19 @@ public class ZeroConstantComponent extends DraggableGate {
             // Konstante ändert sich nie visuell
         });
     }
+
+    @Override
+    protected int getInputPortCount() {
+        return 0;
+    }
+
+    @Override
+    protected int getOutputPortCount() {
+        return 1;
+    }
+
+    @Override
+    protected double getOutputPortXOffset() {
+        return 6;
+    }
 }

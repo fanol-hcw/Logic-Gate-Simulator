@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
+import javafx.geometry.Point2D;
 import org.example.logicgatesimulator.components.ComponentBase;
 
 import java.io.InputStream;
@@ -56,13 +57,22 @@ public class DraggableGate extends ComponentBase {
             if(wasControlDown && event.getButton() == MouseButton.SECONDARY){
                 setLayoutX(event.getSceneX() - mouseAnchorX);
                 setLayoutY(event.getSceneY() - mouseAnchorY);
+
                 for (Line line : incomingConnectedLines){
-                    line.setEndX(event.getSceneX() - mouseAnchorX + getWidth()/2);
-                    line.setEndY(event.getSceneY() - mouseAnchorY - 30);
+                    int inputIndex = getIncomingLineInputIndex(line);
+                    Point2D inputPos = getInputPortScenePosition(inputIndex);
+                    if (inputPos != null) {
+                        line.setEndX(inputPos.getX() - workspace.getLayoutX());
+                        line.setEndY(inputPos.getY() - workspace.getLayoutY());
+                    }
                 }
-                for (Line line : outcomingConnectedLines){
-                    line.setStartX(event.getSceneX() - mouseAnchorX + getWidth()/2);
-                    line.setStartY(event.getSceneY() - mouseAnchorY - 30);
+
+                Point2D outputPos = getOutputPortScenePosition();
+                if (outputPos != null) {
+                    for (Line line : outcomingConnectedLines){
+                        line.setStartX(outputPos.getX() - workspace.getLayoutX());
+                        line.setStartY(outputPos.getY() - workspace.getLayoutY());
+                    }
                 }
             }
         });

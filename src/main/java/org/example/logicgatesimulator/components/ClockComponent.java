@@ -46,6 +46,16 @@ public class ClockComponent extends DraggableGate {
         });
     }
 
+    @Override
+    protected int getInputPortCount() {
+        return 0;
+    }
+
+    @Override
+    protected int getOutputPortCount() {
+        return 1;
+    }
+
     private void updateImageByState() {
         javafx.application.Platform.runLater(() -> {
             ComponentRegistry.ComponentMetadata metadata =

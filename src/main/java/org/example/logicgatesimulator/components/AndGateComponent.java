@@ -29,4 +29,19 @@ public class AndGateComponent extends DraggableGate {
         return logicGate;
     }
 
+    @Override
+    protected int getInputPortCount() {//Anzahl der Eingänge auf der Eingangsseite
+        return 2;
+    }
+
+    @Override
+    protected double getInputPortXOffset() {
+        return -6;
+    }
+
+    @Override
+    protected double getInputPortSpacing() {//definiert den Abstand zwischen den Verbindungspunkten auf der Eingangsseite
+        return 20;
+    }
+
 }

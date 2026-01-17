@@ -20,7 +20,7 @@ public class ComponentRegistry {
                 "",
                 "Schalter",
                 "SwitchOff.png",
-                "SwitchOff.png",
+                "SwitchOn.png",
                 40
         ));
 
@@ -29,7 +29,7 @@ public class ComponentRegistry {
                 "Taktsignal",
                 "ClockOff.png",
                 "ClockOn.png",
-                40
+                30
         ));
 
         COMPONENTS.put("OneConstantComponent", new ComponentMetadata(
@@ -85,8 +85,8 @@ public class ComponentRegistry {
         COMPONENTS.put("XorGateComponent", new ComponentMetadata(
                 "Xor Gate",
                 "XOR-Gatter",
-                "xor.png",
-                "xor.png",
+                "Xor.png",
+                "Xor.png",
                 80
         ));
 
@@ -94,7 +94,23 @@ public class ComponentRegistry {
                 "Reset",
                 "Alles zurücksetzen",
                 "Reset.png",
-                "Reset.png"
+                "Reset.png",
+                30
+        ));
+        COMPONENTS.put("ExportButton", new ComponentMetadata(
+                "Export",
+                "Workspace exportieren",
+                "Export.png",
+                "Export.png",
+                30
+        ));
+
+        COMPONENTS.put("ImportButton", new ComponentMetadata(
+                "Import",
+                "Workspace importieren",
+                "Import.png",
+                "Import.png",
+                30
         ));
     }
 

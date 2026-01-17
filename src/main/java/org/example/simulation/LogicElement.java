@@ -27,7 +27,9 @@ public abstract class LogicElement {
 
         if (newResult != this.output) {
             this.output = newResult;
-            onUpdate.accept(newResult);
+            if (onUpdate != null) {
+                onUpdate.accept(newResult);
+            }
             // Notify the simulation engine that things have changed
             Runner.getInstance().scheduleUpdates(outputConnections);
         }

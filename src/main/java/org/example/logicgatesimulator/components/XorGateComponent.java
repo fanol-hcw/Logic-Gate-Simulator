@@ -1,12 +1,8 @@
 package org.example.logicgatesimulator.components;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import org.example.logicgatesimulator.DraggableGate;
-import org.example.logicgatesimulator.SimulatorUI;
 import org.example.logicgatesimulator.Workspace;
-import org.example.simulation.gates.AndGate;
+import org.example.simulation.LogicElement;
 import org.example.simulation.gates.XorGate;
 
 public class XorGateComponent extends DraggableGate {
@@ -14,7 +10,7 @@ public class XorGateComponent extends DraggableGate {
     //private final Rectangle body;
 
     public XorGateComponent(String name, Workspace workspace) {
-        super(name, null, workspace);
+        super("xor", null, workspace);
         this.logicGate = new XorGate();
         this.logicGate.name = name;
 //
@@ -38,4 +34,22 @@ public class XorGateComponent extends DraggableGate {
 //            }
 //        });
 //    }
+    public LogicElement getLogic() {
+        return logicGate;
+    }
+
+    @Override
+    protected int getInputPortCount() {//Anzahl der Eingänge auf der Eingangsseite
+        return 2;
+    }
+
+    @Override
+    protected double getInputPortXOffset() {
+        return -6;
+    }
+
+    @Override
+    protected double getInputPortSpacing() { //definiert den Abstand zwischen den Verbindungspunkten auf der Eingangsseite
+        return 25;
+    }
 }

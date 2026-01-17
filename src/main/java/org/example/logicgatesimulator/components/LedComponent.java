@@ -24,6 +24,16 @@ public class LedComponent extends DraggableGate {
         });
     }
 
+    @Override
+    protected int getInputPortCount() {
+        return 1;
+    }
+
+    @Override
+    protected int getOutputPortCount() {
+        return 0;
+    }
+
     private void updateImageByState() {
         javafx.application.Platform.runLater(() -> {
             ComponentRegistry.ComponentMetadata metadata =
