@@ -810,7 +810,7 @@ Exporting workspace saves the current simulation state and layout as JSON.
 
 ### 19.2 Sample Export JSON Structure
 
-```json
+json
 {
   "components": [
     {
@@ -904,7 +904,7 @@ This is handled through:
 
 ### 25.1 Example Structure
 
-```java
+java
 public static List<ComponentItem> getInputComponents(Workspace workspace) {...}
 public static List<ComponentItem> getOutputComponents(Workspace workspace) {...}
 public static List<ComponentItem> getGateComponents(Workspace workspace) {...}
@@ -924,7 +924,7 @@ The `Ribbon` class handles adding buttons/icons for each component:
 
 ### 26.1 `addItem()` Method
 
-```java
+java
 ribbon.addItem("Gates", "AND", "AND Gate", "and_icon.png", new ANDGate());
 
 **Steps performed:**
