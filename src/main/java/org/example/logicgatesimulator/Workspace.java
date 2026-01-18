@@ -3,9 +3,7 @@ package org.example.logicgatesimulator;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.DragEvent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -85,16 +83,19 @@ public class Workspace extends Pane {
         }
         ((DraggableGate)gate).setLayoutX(x);
         ((DraggableGate)gate).setLayoutY(y);
-        /// Löscht die ausgewählte Komponente
-        ((DraggableGate)gate).setOnContextMenuRequested(event -> {
-            ContextMenu contextMenu = new ContextMenu();
-            MenuItem deleteItem = new MenuItem("Lösch die Komponente");
-            deleteItem.setOnAction(e -> {
-                deleteComponent((ComponentBase) gate);
-            });
-            contextMenu.getItems().add(deleteItem);
-            contextMenu.show(((DraggableGate)gate), event.getScreenX(), event.getScreenY());
-            event.consume();;
+        // 'addEventFilter' fängt das Event ab, BEVOR die Verkabelungslogik (in ComponentBase) es sieht.(In JavaFX werden Filter vor den Handlern ausgeführt)
+        ((DraggableGate)gate).addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                // Kontextmenü anzeigen
+                ContextMenu contextMenu = new ContextMenu();
+                MenuItem deleteItem = new MenuItem("Lösch die Komponente");
+                deleteItem.setOnAction(e -> {
+                    deleteComponent(((DraggableGate)gate));
+                });
+                contextMenu.getItems().add(deleteItem);
+                contextMenu.show(((DraggableGate)gate), event.getScreenX(), event.getScreenY());
+                event.consume();
+            }
         });
         getChildren().add((DraggableGate)gate);
         components.add((DraggableGate) gate);
