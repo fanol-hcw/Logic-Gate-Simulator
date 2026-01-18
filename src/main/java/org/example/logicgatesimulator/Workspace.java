@@ -127,7 +127,7 @@ public class Workspace extends Pane {
         getChildren().remove(componentToDelete);
     }
 
-    public Line addConnection(ComponentBase from, ComponentBase to) {
+    public Line addConnection(ComponentBase from, ComponentBase to, int index) {
         // check if exists
         if (from == to) {
             return null;
@@ -137,12 +137,9 @@ public class Workspace extends Pane {
                 return null;
             }
         }
-        // add new connection
-        Circle outPort  = from.getConnectingPort();
-        Circle inPort = to.getConnectingPort();
 
-        Point2D start = outPort.localToScene(0,0 );
-        Point2D end = inPort.localToScene(0,0);
+        Point2D start = from.getOutputPortScenePosition();
+        Point2D end = to.getInputPortScenePosition(index);
 
         Line line = new Line(
                 start.getX() - getLayoutX(),
