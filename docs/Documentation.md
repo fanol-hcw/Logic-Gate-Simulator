@@ -61,7 +61,7 @@
 # Project Documentation: Logic Gate Simulator
 
 ## 1. Project Overview
-**Part 1: Project Overview, Core Concepts, and Component Configuration**
+## Part 1: Project Overview, Core Concepts, and Component Configuration
 
 The **Logic Gate Simulator** is a JavaFX-based simulation tool that allows users to design and test digital logic circuits. Users can drag and drop components (inputs, outputs, gates) into a workspace, connect them visually, and observe how the logic propagates through the circuit.
 
